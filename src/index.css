@@ -1,0 +1,57 @@
+
+
+/* body {
+  margin: 0;
+  padding: 0 20px;
+  background-color: var(--light-blue);
+}
+
+a {
+  text-decoration: none;
+  color: var(--link-blue);
+  transition: color 0.2s ease-in-out;
+}
+
+a:hover {
+  color: var(--link-hover);
+}
+
+nav a {
+  border-bottom: 1px dashed var(--border-light);
+  padding-bottom: 2px;
+}
+
+button {
+  cursor: pointer;
+  background-color: var(--primary-blue);
+  color: white;
+  border: none;
+  border-radius: 6px;
+  padding: 8px 14px;
+  font-size: 14px;
+  transition: background-color 0.2s ease-in-out, transform 0.15s ease-in-out;
+}
+
+button:hover {
+  background-color: var(--primary-blue-hover);
+  transform: translateY(-1px);
+}
+
+input,
+button {
+  font-size: 14px;
+}
+
+input {
+  padding: 8px 10px;
+  border: 1px solid var(--border-light);
+  border-radius: 6px;
+  background-color: white;
+  outline: none;
+  transition: border-color 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+}
+
+input:focus {
+  border-color: var(--primary-blue);
+  box-shadow: 0 0 0 3px var(--focus-shadow);
+} */

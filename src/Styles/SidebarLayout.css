@@ -1,0 +1,134 @@
+/* Prevent unwanted horizontal scrolling */
+html, body {
+  margin: 0;
+  padding: 0;
+  overflow-x: hidden; /* disable horizontal scroll */
+  font-family: "Roboto", sans-serif;
+}
+
+/* Sidebar styles */
+.sidebar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  height: 100vh;          /* Full height */
+  width: 250px;           /* Sidebar width */
+  background: #0288d1;
+  color: #fff;
+  padding: 20px;
+  box-sizing: border-box; /* prevents padding from expanding width */
+  transform: translateX(-100%); /* Hidden by default */
+  transition: transform 0.3s ease-in-out;
+  z-index: 1000;
+  overflow-y: auto; /* If sidebar has many items, scroll inside it */
+  display: flex;
+  flex-direction: column; /* Keep logout button at bottom */
+}
+
+/* When open */
+.sidebar.open {
+  transform: translateX(0);
+}
+
+/* Logo */
+.sidebar .logo {
+  font-size: 22px;
+  font-weight: bold;
+  margin-bottom: 30px;
+  text-align: center;
+}
+
+/* Menu list */
+.menu-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  flex: 1; /* Pushes logout button to bottom */
+}
+
+.menu-list li {
+  margin: 10px 0;
+}
+
+.menu-list a {
+  text-decoration: none;
+  display: block;
+  padding: 10px 15px;
+  border-radius: 8px;
+  color: #fff;
+  font-size: 16px;
+  transition: background 0.3s ease;
+}
+
+/* Hover effect */
+.menu-list a:hover {
+  background: rgba(255, 255, 255, 0.2);
+}
+
+/* Active NavLink */
+.menu-list .active-link {
+  background: #0277bd;
+  font-weight: bold;
+}
+
+/* Logout button */
+.logout-btn {
+  background: #e53935;
+  color: #fff;
+  border: none;
+  padding: 12px;
+  border-radius: 8px;
+  font-size: 16px;
+  cursor: pointer;
+  transition: background 0.3s ease;
+}
+
+.logout-btn:hover {
+  background: #c62828;
+}
+
+/* Main content */
+.main {
+  flex: 1;
+  padding: 20px;
+  box-sizing: border-box; /* fixes padding overflow issue */
+  transition: margin-left 0.3s ease-in-out;
+  min-width: 0; /* prevents flex child overflow */
+}
+
+/* Top bar */
+.topbar {
+  display: flex;
+  justify-content: space-between; /* Title left, hamburger right */
+  align-items: center;
+  padding: 10px 20px;
+  position: sticky;
+  top: 0;
+  z-index: 900;
+  box-sizing: border-box;
+}
+
+/* Hamburger button */
+.hamburger {
+  background: none;
+  border: none;
+  color: #0288d1;
+  font-size: 28px;
+  cursor: pointer;
+}
+
+/* Responsive: on larger screens keep sidebar open */
+@media (min-width: 900px) {
+  .sidebar {
+    position: relative;
+    transform: translateX(0); /* Always visible */
+  }
+
+  .main {
+    margin-left: 250px; /* Push content */
+  }
+
+  .hamburger {
+    display: none; /* Hide hamburger */
+  }
+}
