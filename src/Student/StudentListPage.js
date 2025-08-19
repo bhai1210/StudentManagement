@@ -63,7 +63,7 @@ export default function StudentListPage() {
 
   const fetchStudents = async () => {
     try {
-      const res = await axios.get("http://localhost:5000/api/students", {
+      const res = await axios.get("https://student-management-backend-node-rd8.vercel.app/api/students", {
         params: {
           search,
           classFilter,
@@ -88,7 +88,7 @@ export default function StudentListPage() {
   const handleDelete = async () => {
     try {
       await axios.delete(
-        `http://localhost:5000/api/students/${selectedStudentId}`
+        `https://student-management-backend-node-rd8.vercel.app/api/students/${selectedStudentId}`
       );
       toast.success("Student deleted successfully");
       setOpenDeleteDialog(false);

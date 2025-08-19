@@ -23,7 +23,7 @@ export default function ForgotPassword() {
 
     try {
       const res = await axios.post(
-        "http://localhost:5000/auth/forgot-password",
+        "https://student-management-backend-node-rd8.vercel.app/auth/forgot-password",
         { email }
       );
       toast.success(res.data.message || "Password reset link sent! Check your email.");

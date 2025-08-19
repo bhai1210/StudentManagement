@@ -17,7 +17,7 @@ export default function StudentViewPage() {
 
   const fetchStudent = async () => {
     try {
-      const res = await axios.get(`http://localhost:5000/api/students/${id}`);
+      const res = await axios.get(`https://student-management-backend-node-rd8.vercel.app/api/students/${id}`);
       setStudent(res.data);
     } catch (err) {
       toast.error("Failed to fetch student data");

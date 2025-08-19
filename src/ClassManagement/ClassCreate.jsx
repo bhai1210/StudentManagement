@@ -26,7 +26,7 @@ function ClassCreate() {
   const fetchUsers = async () => {
     try {
       setLoading(true);
-      const response = await axios.get("http://localhost:5000/class");
+      const response = await axios.get("hhttps://student-management-backend-node-rd8.vercel.app/class");
       if (Array.isArray(response.data?.data)) {
         setUsers(response.data.data);
       } else {
@@ -52,7 +52,7 @@ function ClassCreate() {
       if (editId) {
         // update existing class
         const response = await axios.put(
-          `http://localhost:5000/class/${editId}`,
+          `https://student-management-backend-node-rd8.vercel.app/class/${editId}`,
           {
             name: formData.name,
             subject: formData.subject,
@@ -65,7 +65,7 @@ function ClassCreate() {
         setEditId(null); // reset edit mode
       } else {
         // create new class
-        const response = await axios.post("http://localhost:5000/class", {
+        const response = await axios.post("https://student-management-backend-node-rd8.vercel.app/class", {
           name: formData.name,
           subject: formData.subject,
           teacher: formData.teacher,
@@ -99,7 +99,7 @@ function ClassCreate() {
   // delete class
   const deleteuser = async (id) => {
     try {
-      await axios.delete(`http://localhost:5000/class/${id}`);
+      await axios.delete(`https://student-management-backend-node-rd8.vercel.app/class/${id}`);
       fetchUsers();
     } catch (err) {
       console.error("Error deleting class:", err.message);

@@ -19,7 +19,7 @@ export default function StudentFormPage() {
 
   const fetchStudent = async () => {
     try {
-      const res = await axios.get(`http://localhost:5000/api/students/${id}`);
+      const res = await axios.get(`https://student-management-backend-node-rd8.vercel.app/api/students/${id}`);
       setForm(res.data);
     } catch (err) {
       toast.error("Failed to fetch student data");
@@ -31,10 +31,10 @@ export default function StudentFormPage() {
   const handleSubmit = async () => {
     try {
       if (id) {
-        await axios.put(`http://localhost:5000/api/students/${id}`, form);
+        await axios.put(`https://student-management-backend-node-rd8.vercel.app/api/students/${id}`, form);
         toast.success("Student updated successfully");
       } else {
-        await axios.post("http://localhost:5000/api/students", form);
+        await axios.post("https://student-management-backend-node-rd8.vercel.app/api/students", form);
         toast.success("Student added successfully");
       }
       navigate("/students");

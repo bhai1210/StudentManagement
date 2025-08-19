@@ -12,7 +12,7 @@ function Payment() {
     }
 
     // Call backend to create order
-    const orderResponse = await axios.post("http://localhost:5000/create-order", {
+    const orderResponse = await axios.post("https://student-management-backend-node-rd8.vercel.app/create-order", {
       amount: 1, // amount in INR (₹500)
       currency: "INR",
       receipt: "receipt_123"
@@ -29,7 +29,7 @@ function Payment() {
       order_id: order.id,
       handler: async function (response) {
         // Verify payment on backend
-        const verifyResponse = await axios.post("http://localhost:5000/verify-payment", response);
+        const verifyResponse = await axios.post("https://student-management-backend-node-rd8.vercel.app/verify-payment", response);
         if (verifyResponse.data.success) {
           alert("Payment Successful!");
         } else {
