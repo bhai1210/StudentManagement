@@ -18,7 +18,7 @@ export default function Register() {
     setLoading(true);
 
     try {
-      const res = await api.post("/auth/register", form);
+      const res = await api.post("/api/register", form);
       toast.success(res.data.message || "Registered successfully!");
       setForm({ email: "", password: "", role: "user" });
     } catch (err) {
