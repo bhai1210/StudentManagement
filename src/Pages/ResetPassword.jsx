@@ -25,7 +25,7 @@ export default function ResetPassword() {
     setLoading(true);
 
     try {
-      const res = await axios.post("https://student-management-backend-node-rd8.vercel.app/auth/reset-password", {
+      const res = await axios.post("https://student-management-backend-node-rd8.vercel.app/reset-password", {
         token,
         password,
       });
