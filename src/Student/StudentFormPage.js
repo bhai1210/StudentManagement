@@ -32,10 +32,10 @@ export default function StudentFormPage() {
   const handleSubmit = async () => {
     try {
       if (id) {
-        await api.put(`/api/students/${id}`, form);
+        await api.put(`/students/${id}`, form);
         toast.success("Student updated successfully");
       } else {
-        await api.post("/api/students", form);
+        await api.post("/students", form);
         toast.success("Student added successfully");
       }
       navigate("/students");

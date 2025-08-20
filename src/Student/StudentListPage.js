@@ -89,7 +89,7 @@ export default function StudentListPage() {
   const handleDelete = async () => {
     try {
       await api.delete(
-        `/api/students/${selectedStudentId}`
+        `/students/${selectedStudentId}`
       );
       toast.success("Student deleted successfully");
       setOpenDeleteDialog(false);
