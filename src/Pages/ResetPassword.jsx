@@ -70,18 +70,7 @@ export default function ResetPassword() {
           
 
                 {/* Divider */}
-                <Box
-                  display="flex"
-                  alignItems="center"
-                  my={3}
-                  sx={{ gap: 2 }}
-                >
-                  <Box sx={{ flex: 1, height: 1, bgcolor: "#eee" }}></Box>
-                  <Typography variant="body2" color="text.secondary">
-                    Or
-                  </Typography>
-                  <Box sx={{ flex: 1, height: 1, bgcolor: "#eee" }}></Box>
-                </Box>
+             
 
                 {/* Reset Password Form */}
                 <Typography variant="h5" fontWeight="bold" mb={2} textAlign="center">
