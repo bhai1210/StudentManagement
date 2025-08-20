@@ -18,7 +18,7 @@ export default function StudentViewPage() {
 
   const fetchStudent = async () => {
     try {
-      const res = await api.get(`/api/students/${id}`);
+      const res = await api.get(`/students/${id}`);
       setStudent(res.data);
     } catch (err) {
       toast.error("Failed to fetch student data");

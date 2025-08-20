@@ -20,7 +20,7 @@ export default function StudentFormPage() {
 
   const fetchStudent = async () => {
     try {
-      const res = await api.get(`/api/students/${id}`);
+      const res = await api.get(`/students/${id}`);
       setForm(res.data);
     } catch (err) {
       toast.error("Failed to fetch student data");

@@ -64,7 +64,7 @@ export default function StudentListPage() {
 
   const fetchStudents = async () => {
     try {
-      const res = await api.get("/api/students", {
+      const res = await api.get("/students", {
         params: {
           search,
           classFilter,
