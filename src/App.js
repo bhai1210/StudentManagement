@@ -3,6 +3,8 @@ import { Routes, Route, Navigate } from "react-router-dom";
 import { ToastContainer } from "react-toastify";
 import { Menu as MenuIcon, Close as CloseIcon } from "@mui/icons-material";
 import "react-toastify/dist/ReactToastify.css";
+// import 'antd/dist/antd.css';
+// import 'antd/dist/reset.css'; // for Ant Design v5
 
 import Login from "./Pages/Login";
 import Register from "./Pages/Register";

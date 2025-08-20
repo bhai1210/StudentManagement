@@ -12,7 +12,7 @@
   padding: 20px;
   transition: transform 0.3s ease-in-out;
   flex-shrink: 0;
-  height: 100vh;       /* Force full height */
+  height: auto;       /* Force full height */
   box-sizing: border-box;
 }
 

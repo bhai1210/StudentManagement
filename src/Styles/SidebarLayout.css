@@ -2,8 +2,9 @@
 html, body {
   margin: 0;
   padding: 0;
-  overflow-x: hidden; /* disable horizontal scroll */
+  overflow-x: hidden;
   font-family: "Roboto", sans-serif;
+  background: #f4f6f9; /* Light background for main content */
 }
 
 /* Sidebar styles */
@@ -11,18 +12,18 @@ html, body {
   position: fixed;
   top: 0;
   left: 0;
-  height: 100vh;          /* Full height */
-  width: 250px;           /* Sidebar width */
-  background: #0288d1;
+  height: full;
+  width: 260px;
+  background: #1e1e2f; /* Darker modern sidebar */
   color: #fff;
   padding: 20px;
-  box-sizing: border-box; /* prevents padding from expanding width */
-  transform: translateX(-100%); /* Hidden by default */
+  box-sizing: border-box;
+  transform: translateX(-100%);
   transition: transform 0.3s ease-in-out;
   z-index: 1000;
-  overflow-y: auto; /* If sidebar has many items, scroll inside it */
-  display: flex;
-  flex-direction: column; /* Keep logout button at bottom */
+  overflow-y: auto;
+  /* display: flex;
+  flex-direction: column; */
 }
 
 /* When open */
@@ -32,10 +33,12 @@ html, body {
 
 /* Logo */
 .sidebar .logo {
-  font-size: 22px;
+  font-size: 24px;
   font-weight: bold;
-  margin-bottom: 30px;
+  margin-bottom: 40px;
   text-align: center;
+  color: #00c6ff; /* Accent color */
+  letter-spacing: 1px;
 }
 
 /* Menu list */
@@ -43,76 +46,91 @@ html, body {
   list-style: none;
   padding: 0;
   margin: 0;
-  flex: 1; /* Pushes logout button to bottom */
+  flex: 1;
 }
 
 .menu-list li {
-  margin: 10px 0;
+  margin: 12px 0;
 }
 
 .menu-list a {
   text-decoration: none;
   display: block;
-  padding: 10px 15px;
-  border-radius: 8px;
-  color: #fff;
+  padding: 12px 16px;
+  border-radius: 10px;
+  color: #cfd8dc;
   font-size: 16px;
-  transition: background 0.3s ease;
+  font-weight: 500;
+  transition: all 0.3s ease;
 }
 
 /* Hover effect */
 .menu-list a:hover {
-  background: rgba(255, 255, 255, 0.2);
+  background: rgba(0, 198, 255, 0.15); /* Soft glow effect */
+  color: #00c6ff;
+  transform: translateX(5px);
 }
 
 /* Active NavLink */
 .menu-list .active-link {
-  background: #0277bd;
+  background: linear-gradient(90deg, #00c6ff, #0072ff);
+  color: #fff;
   font-weight: bold;
+  box-shadow: 0 4px 10px rgba(0, 198, 255, 0.3);
 }
 
 /* Logout button */
+/* Logout button */
 .logout-btn {
-  background: #e53935;
+  text-decoration: none;
+  display: block;
+  padding: 12px 16px;
+  background: linear-gradient(90deg, #ff4b2b, #ff416c); /* vibrant red-pink */
+  border-radius: 10px;
+  width: 200px;
   color: #fff;
-  border: none;
-  padding: 12px;
-  border-radius: 8px;
   font-size: 16px;
+  font-weight: 500;
+  text-align: center;
+  transition: all 0.3s ease;
   cursor: pointer;
-  transition: background 0.3s ease;
 }
 
 .logout-btn:hover {
-  background: #c62828;
+  background: linear-gradient(90deg, #ff6a36, #ff1744);
+  transform: scale(1.05);
 }
+
+
 
 /* Main content */
 .main {
   flex: 1;
   padding: 20px;
-  box-sizing: border-box; /* fixes padding overflow issue */
+  box-sizing: border-box;
   transition: margin-left 0.3s ease-in-out;
-  min-width: 0; /* prevents flex child overflow */
+  min-width: 0;
 }
 
 /* Top bar */
 .topbar {
   display: flex;
-  justify-content: space-between; /* Title left, hamburger right */
+  justify-content: space-between;
   align-items: center;
-  padding: 10px 20px;
+  padding: 14px 20px;
   position: sticky;
   top: 0;
   z-index: 900;
-  box-sizing: border-box;
+  background: #fff;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+  border-radius: 0 0 12px 12px;
 }
 
 /* Hamburger button */
 .hamburger {
   background: none;
   border: none;
-  color: #0288d1;
+  color: #1e1e2f;
   font-size: 28px;
   cursor: pointer;
 }
@@ -121,14 +139,14 @@ html, body {
 @media (min-width: 900px) {
   .sidebar {
     position: relative;
-    transform: translateX(0); /* Always visible */
+    transform: translateX(0);
   }
 
   .main {
-    margin-left: 250px; /* Push content */
+    margin-left: 260px;
   }
 
   .hamburger {
-    display: none; /* Hide hamburger */
+    display: none;
   }
 }
