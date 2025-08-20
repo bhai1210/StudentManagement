@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useRef } from "react";
 import "../Styles/SidebarLayout.css";
 import { useAuth } from "../Context/AuthContext";
 import { NavLink, useNavigate } from "react-router-dom";
@@ -6,25 +6,37 @@ import { NavLink, useNavigate } from "react-router-dom";
 export default function Sidebar({ role, isOpen, setIsOpen }) {
   const { logout } = useAuth();
   const navigate = useNavigate();
+  const sidebarRef = useRef(null);
 
   // Define menu items for each role
   const menuItems = {
     admin: [
-      
       { label: "Manage Teachers", path: "/User" },
-      // { label: "Reports", path: "/reports" },
-      // { label: "Settings", path: "/settings" },
     ],
     user: [
       { label: "Student Management", path: "/Students" },
-        { label: "Classes Making", path: "/ClassCreate" },
+      { label: "Classes Making", path: "/ClassCreate" },
     ],
   };
 
   const items = role === "admin" ? menuItems.admin : menuItems.user;
 
+  // Close sidebar on outside click
+  useEffect(() => {
+    function handleClickOutside(event) {
+      if (isOpen && sidebarRef.current && !sidebarRef.current.contains(event.target)) {
+        setIsOpen(false);
+      }
+    }
+
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, [isOpen, setIsOpen]);
+
   return (
-    <aside className={`sidebar ${isOpen ? "open" : ""}`}>
+    <aside ref={sidebarRef} className={`sidebar ${isOpen ? "open" : ""}`}>
       <h2 className="logo">MyApp</h2>
 
       <ul className="menu-list">
@@ -33,6 +45,7 @@ export default function Sidebar({ role, isOpen, setIsOpen }) {
             <NavLink
               to={item.path}
               className={({ isActive }) => (isActive ? "active-link" : "")}
+              onClick={() => setIsOpen(false)} // also close when navigating
             >
               {item.label}
             </NavLink>
