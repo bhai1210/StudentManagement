@@ -26,7 +26,7 @@ function ClassCreate() {
   const fetchUsers = async () => {
     try {
       setLoading(true);
-      const response = await axios.get("hhttps://student-management-backend-node-rd8.vercel.app/class");
+      const response = await axios.get("https://student-management-backend-node-rd8.vercel.app/class");
       if (Array.isArray(response.data?.data)) {
         setUsers(response.data.data);
       } else {

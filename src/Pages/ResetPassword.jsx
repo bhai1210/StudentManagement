@@ -13,6 +13,7 @@ import {
 } from "@mui/material";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import api from "../Services/api";
 
 export default function ResetPassword() {
   const { token } = useParams();
@@ -25,7 +26,7 @@ export default function ResetPassword() {
     setLoading(true);
 
     try {
-      const res = await axios.post("https://student-management-backend-node-rd8.vercel.app/reset-password", {
+      const res = await api.post("/auth/reset-password", {
         token,
         password,
       });

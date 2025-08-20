@@ -5,6 +5,7 @@ import axios from "axios";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { motion } from "framer-motion";
+import api from "../Services/api";
 
 export default function StudentViewPage() {
   const { id } = useParams();
@@ -17,7 +18,7 @@ export default function StudentViewPage() {
 
   const fetchStudent = async () => {
     try {
-      const res = await axios.get(`https://student-management-backend-node-rd8.vercel.app/api/students/${id}`);
+      const res = await api.get(`/api/students/${id}`);
       setStudent(res.data);
     } catch (err) {
       toast.error("Failed to fetch student data");

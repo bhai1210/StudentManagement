@@ -22,7 +22,7 @@ export default function Login() {
     setLoading(true);
 
     try {
-      const res = await api.post("/api/login", form);
+      const res = await api.post("/auth/login", form);
       const token = res.data.token;
       const roles = res?.data?.user?.role;
       localStorage.setItem("roles", roles);

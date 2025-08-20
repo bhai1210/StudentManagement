@@ -37,6 +37,7 @@ import DeleteOutlineIcon from "@mui/icons-material/DeleteOutline";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { motion } from "framer-motion";
+import api from "../Services/api";
 
 const Transition = React.forwardRef(function Transition(props, ref) {
   return <Slide direction="up" ref={ref} {...props} />;
@@ -63,7 +64,7 @@ export default function StudentListPage() {
 
   const fetchStudents = async () => {
     try {
-      const res = await axios.get("https://student-management-backend-node-rd8.vercel.app/api/students", {
+      const res = await api.get("/api/students", {
         params: {
           search,
           classFilter,
@@ -87,8 +88,8 @@ export default function StudentListPage() {
 
   const handleDelete = async () => {
     try {
-      await axios.delete(
-        `https://student-management-backend-node-rd8.vercel.app/api/students/${selectedStudentId}`
+      await api.delete(
+        `/api/students/${selectedStudentId}`
       );
       toast.success("Student deleted successfully");
       setOpenDeleteDialog(false);

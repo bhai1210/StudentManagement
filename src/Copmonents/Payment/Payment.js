@@ -1,6 +1,7 @@
 import React from "react";
 import axios from "axios";
 import { loadRazorpay } from "../../utills/loadRazorpay";
+import api from "../../Services/api";
 
 function Payment() {
   const handlePayment = async () => {
@@ -12,7 +13,7 @@ function Payment() {
     }
 
     // Call backend to create order
-    const orderResponse = await axios.post("https://student-management-backend-node-rd8.vercel.app/create-order", {
+    const orderResponse = await api.post("/create-order", {
       amount: 1, // amount in INR (₹500)
       currency: "INR",
       receipt: "receipt_123"

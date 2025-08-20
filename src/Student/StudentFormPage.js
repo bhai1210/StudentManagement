@@ -5,6 +5,7 @@ import axios from "axios";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { motion } from "framer-motion"; // <- import framer-motion
+import api from "../Services/api";
 
 export default function StudentFormPage() {
   const { id } = useParams();
@@ -19,7 +20,7 @@ export default function StudentFormPage() {
 
   const fetchStudent = async () => {
     try {
-      const res = await axios.get(`https://student-management-backend-node-rd8.vercel.app/api/students/${id}`);
+      const res = await api.get(`/api/students/${id}`);
       setForm(res.data);
     } catch (err) {
       toast.error("Failed to fetch student data");
@@ -31,10 +32,10 @@ export default function StudentFormPage() {
   const handleSubmit = async () => {
     try {
       if (id) {
-        await axios.put(`https://student-management-backend-node-rd8.vercel.app/api/students/${id}`, form);
+        await api.put(`/api/students/${id}`, form);
         toast.success("Student updated successfully");
       } else {
-        await axios.post("https://student-management-backend-node-rd8.vercel.app/api/students", form);
+        await api.post("/api/students", form);
         toast.success("Student added successfully");
       }
       navigate("/students");

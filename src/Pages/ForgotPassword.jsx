@@ -12,6 +12,7 @@ import {
 } from "@mui/material";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import api from "../Services/api";
 
 export default function ForgotPassword() {
   const [email, setEmail] = useState("");
@@ -22,8 +23,8 @@ export default function ForgotPassword() {
     setLoading(true);
 
     try {
-      const res = await axios.post(
-        "https://student-management-backend-node-rd8.vercel.app/forgot-password",
+      const res = await api.post(
+        "/auth/forgot-password",
         { email }
       );
       toast.success(res.data.message || "Password reset link sent! Check your email.");
