@@ -7,27 +7,34 @@ import "../Styles/register.css"; // <-- import CSS
 
 export default function Register() {
   const navigate = useNavigate();
+  
   const [form, setForm] = useState({ email: "", password: "", role: "user" });
   const [loading, setLoading] = useState(false);
 
   const onChange = (e) =>
     setForm({ ...form, [e.target.name]: e.target.value });
 
-  const onSubmit = async (e) => {
-    e.preventDefault();
-    setLoading(true);
+const onSubmit = async (e) => {
+  e.preventDefault();
+  setLoading(true);
 
-    try {
-      const res = await api.post("/auth/register", form);
-      toast.success(res.data.message || "Registered successfully!");
-      setForm({ email: "", password: "", role: "user" });
-    } catch (err) {
-      const msg = err?.response?.data?.error || "Registration failed";
-      toast.error(msg);
-    } finally {
-      setLoading(false);
-    }
-  };
+  try {
+    const res = await api.post("/auth/register", form);
+    toast.success(res.data.message || "Registered successfully!");
+    setForm({ email: "", password: "", role: "user" });
+
+    // Delay navigation so the toast is visible
+    setTimeout(() => {
+      navigate('/');
+    }, 2000); // 2 seconds
+  } catch (err) {
+    const msg = err?.response?.data?.error || "Registration failed";
+    toast.error(msg);
+  } finally {
+    setLoading(false);
+  }
+};
+
 
   return (
     <section className="register-section">

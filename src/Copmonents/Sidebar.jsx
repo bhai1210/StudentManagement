@@ -10,7 +10,7 @@ export default function Sidebar({ role, isOpen, setIsOpen }) {
   // Define menu items for each role
   const menuItems = {
     admin: [
-      { label: "Dashboard", path: "/dashboard" },
+      
       { label: "Manage Teachers", path: "/User" },
       // { label: "Reports", path: "/reports" },
       // { label: "Settings", path: "/settings" },

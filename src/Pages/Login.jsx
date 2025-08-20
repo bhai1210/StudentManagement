@@ -35,9 +35,9 @@ export default function Login() {
       toast.success("Login successful!", { autoClose: 2000 });
 
       if (role === "admin") {
-        navigate("/admin/dashboard", { replace: true });
+        navigate("/User", { replace: true });
       } else {
-        navigate("/dashboard", { replace: true });
+        navigate("/Students", { replace: true });
       }
     } catch (err) {
       const msg = err?.response?.data?.error || "Invalid email or password";

@@ -28,7 +28,7 @@ export default function User() {
       const res = await api.get("/users");
       setUsers(res.data);
     } catch (err) {
-      toast.error("Failed to fetch users");
+      // toast.error("Failed to fetch users");
       console.error(err);
     } finally {
       setLoading(false);
