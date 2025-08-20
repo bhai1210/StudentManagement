@@ -6,6 +6,9 @@ import { NavLink, useNavigate } from "react-router-dom";
 export default function Sidebar({ role, isOpen, setIsOpen }) {
   const { logout } = useAuth();
   const navigate = useNavigate();
+
+
+  
   const sidebarRef = useRef(null);
 
   // Define menu items for each role
