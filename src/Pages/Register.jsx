@@ -51,7 +51,7 @@ const onSubmit = async (e) => {
         {/* Right Form */}
         <div className="register-form-container">
           <div className="register-card">
-            <h2 className="register-title">Create Your Account</h2>
+            <h2 className="register-title">Register Your Account</h2>
 
             <form className="register-form" onSubmit={onSubmit}>
               <input

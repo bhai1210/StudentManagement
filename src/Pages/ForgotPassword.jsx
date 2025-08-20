@@ -63,25 +63,7 @@ export default function ForgotPassword() {
                 sx={{ p: 4, borderRadius: 3, bgcolor: "#fff" }}
               >
                 {/* Social Buttons */}
-                <Box
-                  display="flex"
-                  alignItems="center"
-                  justifyContent="center"
-                  gap={2}
-                >
-                  <Typography variant="body1" fontWeight="bold">
-                    Reset via
-                  </Typography>
-                  <Button variant="contained" color="primary" size="small">
-                    F
-                  </Button>
-                  <Button variant="contained" color="primary" size="small">
-                    T
-                  </Button>
-                  <Button variant="contained" color="primary" size="small">
-                    in
-                  </Button>
-                </Box>
+            
 
                 {/* Divider */}
                 <Box
