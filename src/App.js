@@ -22,6 +22,7 @@ import Sidebar from "./Copmonents/Sidebar";
 
 import "./App.css"; // responsive styles
 import ClassCreate from "./ClassManagement/ClassCreate";
+import ExtraCrud from "./ExtraCrud/ExtraCrud";
 
 export default function App() {
   const { token } = useAuth();
@@ -37,6 +38,7 @@ export default function App() {
           <Route path="/register" element={<Register />} />
           <Route path="/Admin" element={<Register />} />
           <Route path="/User" element={<User />} />
+             <Route path="/Info" element={<ExtraCrud />} />
           <Route path="/Students" element={<StudentListPage />} />
           <Route path="/Students/add" element={<StudentFormPage />} />
           <Route path="/Students/edit/:id" element={<StudentFormPage />} />
@@ -79,6 +81,7 @@ export default function App() {
               }
             />
             <Route path="/User" element={<User />} />
+              <Route path="/Info" element={<ExtraCrud />} />
               <Route path="/ClassCreate" element={<ClassCreate />} />
             <Route path="/Students" element={<StudentListPage />} />
             <Route path="/Students/add" element={<StudentFormPage />} />
