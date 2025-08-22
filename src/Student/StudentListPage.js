@@ -140,12 +140,12 @@ export default function StudentListPage() {
         <ToastContainer position="top-right" autoClose={3000} />
 
         {/* Title */}
-        {/* <Typography
+        <Typography
           variant={isMobile ? "h5" : "h4"}
           sx={{ mb: 3, color: "#1976d2", fontWeight: 600, textAlign: isMobile ? "center" : "left" }}
         >
           Student Management
-        </Typography> */}
+        </Typography>
 
         {/* Search & Filter */}
         <Box

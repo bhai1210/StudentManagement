@@ -13,6 +13,10 @@ import {
   TableRow,
   Typography,
   IconButton,
+  CircularProgress,
+  Dialog,
+  DialogTitle,
+  DialogActions,
 } from "@mui/material";
 import { Edit, Delete } from "@mui/icons-material";
 import api from "../Services/api";
@@ -27,14 +31,19 @@ function ExtraCrud() {
   });
   const [editId, setEditId] = useState(null);
   const [datas, setDatas] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const [deleteDialog, setDeleteDialog] = useState({ open: false, id: null });
 
   // Fetch all data
   const fetchData = async () => {
+    setLoading(true);
     try {
       const response = await api.get("/extra");
       setDatas(response.data.data || []);
     } catch (error) {
       console.error("Error fetching data", error);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -51,51 +60,72 @@ function ExtraCrud() {
   // Handle submit
   const onSubmit = async (e) => {
     e.preventDefault();
+    setLoading(true);
     try {
       if (editId) {
         await api.put(`/extra/${editId}`, formData);
       } else {
         await api.post("/extra", formData);
       }
-      setFormData({ first: "", second: "", third: "", forth: "", five: "" });
-      setEditId(null);
+      resetForm();
       fetchData();
     } catch (error) {
       console.error("Error submitting form", error);
+    } finally {
+      setLoading(false);
     }
   };
 
+  const resetForm = () => {
+    setFormData({ first: "", second: "", third: "", forth: "", five: "" });
+    setEditId(null);
+  };
+
   // Edit handler
-  const onEdit = (user) => {
+  const onEdit = (item) => {
     setFormData({
-      first: user.first,
-      second: user.second,
-      third: user.third,
-      forth: user.forth,
-      five: user.five,
+      first: item.first,
+      second: item.second,
+      third: item.third,
+      forth: item.forth,
+      five: item.five,
     });
-    setEditId(user._id);
+    setEditId(item._id);
   };
 
   // Delete handler
-  const onDelete = async (id) => {
+  const confirmDelete = (id) => {
+    setDeleteDialog({ open: true, id });
+  };
+
+  const onDelete = async () => {
     try {
-      await api.delete(`/extra/${id}`);
+      await api.delete(`/extra/${deleteDialog.id}`);
       fetchData();
     } catch (error) {
       console.error("Error deleting data", error);
+    } finally {
+      setDeleteDialog({ open: false, id: null });
     }
   };
 
   return (
     <Container maxWidth="lg" sx={{ mt: 4, mb: 4 }}>
       {/* Form */}
-      <Paper sx={{ p: 3, mb: 4 }} elevation={3}>
+      <Paper
+  sx={{
+    p: 3,
+    mb: 4,
+    borderRadius: 3, // increase radius, higher number = more rounded
+    boxShadow: 6,    // increase shadow depth, higher number = deeper shadow
+  }}
+  elevation={3}      // optional, works with boxShadow
+>
         <Typography variant="h6" gutterBottom>
           {editId ? "Edit Data" : "Add Data"}
         </Typography>
         <form onSubmit={onSubmit}>
-          <Grid container spacing={2}>
+        
             {["first", "second", "third", "forth", "five"].map((field) => (
               <Grid item xs={12} sm={6} md={4} key={field}>
                 <TextField
@@ -106,13 +136,18 @@ function ExtraCrud() {
                   onChange={handleChange}
                   variant="outlined"
                 />
+                
               </Grid>
             ))}
-            <Grid item xs={12}>
-              <Button
+
+             
+            
+          <Button
                 type="submit"
                 variant="contained"
                 color={editId ? "warning" : "primary"}
+                disabled={loading}
+                startIcon={loading && <CircularProgress size={20} />}
               >
                 {editId ? "Update" : "Submit"}
               </Button>
@@ -120,80 +155,93 @@ function ExtraCrud() {
                 <Button
                   sx={{ ml: 2 }}
                   variant="outlined"
-                  onClick={() => {
-                    setFormData({
-                      first: "",
-                      second: "",
-                      third: "",
-                      forth: "",
-                      five: "",
-                    });
-                    setEditId(null);
-                  }}
+                  onClick={resetForm}
                 >
                   Cancel
                 </Button>
               )}
-            </Grid>
-          </Grid>
         </form>
       </Paper>
 
+
+   
+
       {/* Table */}
-      <Paper sx={{ p: 2 }} elevation={3}>
+     <Paper
+  sx={{
+    p: 3,
+    mb: 4,
+    borderRadius: 3, // increase radius, higher number = more rounded
+    boxShadow: 6,    // increase shadow depth, higher number = deeper shadow
+  }}
+  elevation={3}      // optional, works with boxShadow
+>
         <Typography variant="h6" gutterBottom>
           Data List
         </Typography>
-        <TableContainer>
-          <Table>
-            <TableHead>
-              <TableRow>
-                <TableCell>First</TableCell>
-                <TableCell>Second</TableCell>
-                <TableCell>Third</TableCell>
-                <TableCell>Forth</TableCell>
-                <TableCell>Five</TableCell>
-                <TableCell align="center">Actions</TableCell>
-              </TableRow>
-            </TableHead>
-            <TableBody>
-              {datas.length > 0 ? (
-                datas.map((item) => (
-                  <TableRow key={item._id}>
-                    <TableCell>{item.first}</TableCell>
-                    <TableCell>{item.second}</TableCell>
-                    <TableCell>{item.third}</TableCell>
-                    <TableCell>{item.forth}</TableCell>
-                    <TableCell>{item.five}</TableCell>
-                    <TableCell align="center">
-                      <IconButton
-                        color="primary"
-                        onClick={() => onEdit(item)}
-                        size="small"
-                      >
-                        <Edit />
-                      </IconButton>
-                      <IconButton
-                        color="error"
-                        onClick={() => onDelete(item._id)}
-                        size="small"
-                      >
-                        <Delete />
-                      </IconButton>
+        {loading ? (
+          <CircularProgress />
+        ) : (
+          <TableContainer>
+            <Table>
+              <TableHead>
+                <TableRow>
+                  {["First", "Second", "Third", "Forth", "Five"].map((head) => (
+                    <TableCell  key={head}>{head}</TableCell>
+                  ))}
+                  <TableCell align="center">Actions</TableCell>
+                </TableRow>
+              </TableHead>
+              <TableBody>
+                {datas.length > 0 ? (
+                  datas.map((item) => (
+                    <TableRow key={item._id}>
+                      <TableCell>{item.first}</TableCell>
+                      <TableCell>{item.second}</TableCell>
+                      <TableCell>{item.third}</TableCell>
+                      <TableCell>{item.forth}</TableCell>
+                      <TableCell>{item.five}</TableCell>
+                      <TableCell align="center">
+                        <IconButton color="primary" onClick={() => onEdit(item)}>
+                          <Edit />
+                        </IconButton>
+                        <IconButton
+                          color="error"
+                          onClick={() => confirmDelete(item._id)}
+                        >
+                          <Delete />
+                        </IconButton>
+                      </TableCell>
+                    </TableRow>
+                  ))
+                ) : (
+                  <TableRow>
+                    <TableCell colSpan={6} align="center">
+                      No data found
                     </TableCell>
                   </TableRow>
-                ))
-              ) : (
-                <TableRow>
-                  <TableCell colSpan={6} align="center">
-                    No data found
-                  </TableCell>
-                </TableRow>
-              )}
-            </TableBody>
-          </Table>
-        </TableContainer>
+                )}
+              </TableBody>
+            </Table>
+          </TableContainer>
+        )}
       </Paper>
+
+      {/* Delete confirmation dialog */}
+      <Dialog
+        open={deleteDialog.open}
+        onClose={() => setDeleteDialog({ open: false, id: null })}
+      >
+        <DialogTitle>Are you sure you want to delete?</DialogTitle>
+        <DialogActions>
+          <Button onClick={() => setDeleteDialog({ open: false, id: null })}>
+            Cancel
+          </Button>
+          <Button color="error" onClick={onDelete}>
+            Delete
+          </Button>
+        </DialogActions>
+      </Dialog>
     </Container>
   );
 }

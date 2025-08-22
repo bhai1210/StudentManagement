@@ -6,9 +6,7 @@ import "./Header.css"; // create a separate CSS file for header styles
 export default function Header({ sidebarOpen, setSidebarOpen }) {
   return (
     <header className="app-header">
-      <div className="header-left">
-        <h1 className="header-title">Student Management</h1>
-      </div>
+    
       <div className="header-right">
         <button
           className="hamburger-btn"

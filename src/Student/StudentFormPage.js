@@ -59,6 +59,7 @@ export default function StudentFormPage() {
     <motion.div initial="hidden" animate="visible" variants={containerVariants}>
       <Box sx={{ maxWidth: 600, mx: "auto", p: 4 }}>
         <ToastContainer position="top-right" autoClose={3000} />
+      
         <motion.h1 variants={fieldVariants}>{id ? "Update Student" : "Add Student"}</motion.h1>
         <Box sx={{ display: "flex", flexDirection: "column", gap: 2 }}>
           <motion.div variants={fieldVariants}>
