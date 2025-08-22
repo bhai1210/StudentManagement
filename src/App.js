@@ -1,10 +1,7 @@
-import { useState } from "react";
-import { Routes, Route, Navigate } from "react-router-dom";
+import { useState, useEffect } from "react";
+import { Routes, Route, Navigate, useLocation, useNavigate } from "react-router-dom";
 import { ToastContainer } from "react-toastify";
-import { Menu as MenuIcon, Close as CloseIcon } from "@mui/icons-material";
 import "react-toastify/dist/ReactToastify.css";
-// import 'antd/dist/antd.css';
-// import 'antd/dist/reset.css'; // for Ant Design v5
 
 import Login from "./Pages/Login";
 import Register from "./Pages/Register";
@@ -14,38 +11,42 @@ import ResetPassword from "./Pages/ResetPassword";
 import User from "./Pages/User";
 import StudentFormPage from "./Student/StudentFormPage";
 import StudentListPage from "./Student/StudentListPage";
-import Home from "./Copmonents/Home";
 import StudentViewPage from "./Student/StudentViewPage";
 import PrivateRoute from "./Copmonents/PrivateRoute";
 import { useAuth } from "./Context/AuthContext";
 import Sidebar from "./Copmonents/Sidebar";
-
-import "./App.css"; // responsive styles
+import Header from "./Copmonents/Header";
 import ClassCreate from "./ClassManagement/ClassCreate";
 import ExtraCrud from "./ExtraCrud/ExtraCrud";
 import ExtraCrudOne from "./ExtraCrud/ExtraCrudOne/ExtraCrudOne";
 
+import "./App.css";
+
 export default function App() {
-  const { token } = useAuth();
-  const role = localStorage.getItem("roles");
+  const { token, role } = useAuth();
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  const navigate = useNavigate();
+  const location = useLocation();
+
+  // Auto-redirect based on role if logged in
+  useEffect(() => {
+    if (token) {
+      if (role === "admin" && location.pathname === "/") {
+        navigate("/User", { replace: true });
+      } else if (role !== "admin" && location.pathname === "/") {
+        navigate("/Students", { replace: true });
+      }
+    }
+  }, [token, role, navigate, location.pathname]);
 
   if (!token) {
     return (
       <div className="app-public">
         <Routes>
-          {/* <Route path="/" element={<Home />} /> */}
           <Route path="/" element={<Login />} />
           <Route path="/register" element={<Register />} />
-          <Route path="/Admin" element={<Register />} />
-          <Route path="/User" element={<User />} />
-             <Route path="/Info" element={<ExtraCrud />} />
-          <Route path="/Students" element={<StudentListPage />} />
-          <Route path="/Students/add" element={<StudentFormPage />} />
-          <Route path="/Students/edit/:id" element={<StudentFormPage />} />
           <Route path="/forgot-password" element={<ForgotPassword />} />
           <Route path="/reset-password/:token" element={<ResetPassword />} />
-          <Route path="/Students/view/:id" element={<StudentViewPage />} />
           <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
         <ToastContainer position="top-right" autoClose={2000} />
@@ -60,17 +61,10 @@ export default function App() {
 
       {/* Main content */}
       <div className="app-main">
-        {/* Topbar */}
-        <header >
-          <h1  className="title ">Student Managment</h1>
-          <button
-            className="hamburger"
-            onClick={() => setSidebarOpen((prev) => !prev)}
-          >
-            {sidebarOpen ? <CloseIcon /> : <MenuIcon />}
-          </button>
-        </header>
+        {/* Header */}
+        <Header sidebarOpen={sidebarOpen} setSidebarOpen={setSidebarOpen} />
 
+        {/* Routes */}
         <main className="content">
           <Routes>
             <Route
@@ -81,15 +75,70 @@ export default function App() {
                 </PrivateRoute>
               }
             />
-            <Route path="/User" element={<User />} />
-              <Route path="/Info" element={<ExtraCrud />} />
-
-                 <Route path="/StudentInfo" element={<ExtraCrudOne />} />
-              <Route path="/ClassCreate" element={<ClassCreate />} />
-            <Route path="/Students" element={<StudentListPage />} />
-            <Route path="/Students/add" element={<StudentFormPage />} />
-            <Route path="/Students/edit/:id" element={<StudentFormPage />} />
-            <Route path="/Students/view/:id" element={<StudentViewPage />} />
+            <Route
+              path="/User"
+              element={
+                <PrivateRoute>
+                  <User />
+                </PrivateRoute>
+              }
+            />
+            <Route
+              path="/Info"
+              element={
+                <PrivateRoute>
+                  <ExtraCrud />
+                </PrivateRoute>
+              }
+            />
+            <Route
+              path="/StudentInfo"
+              element={
+                <PrivateRoute>
+                  <ExtraCrudOne />
+                </PrivateRoute>
+              }
+            />
+            <Route
+              path="/ClassCreate"
+              element={
+                <PrivateRoute>
+                  <ClassCreate />
+                </PrivateRoute>
+              }
+            />
+            <Route
+              path="/Students"
+              element={
+                <PrivateRoute>
+                  <StudentListPage />
+                </PrivateRoute>
+              }
+            />
+            <Route
+              path="/Students/add"
+              element={
+                <PrivateRoute>
+                  <StudentFormPage />
+                </PrivateRoute>
+              }
+            />
+            <Route
+              path="/Students/edit/:id"
+              element={
+                <PrivateRoute>
+                  <StudentFormPage />
+                </PrivateRoute>
+              }
+            />
+            <Route
+              path="/Students/view/:id"
+              element={
+                <PrivateRoute>
+                  <StudentViewPage />
+                </PrivateRoute>
+              }
+            />
             <Route path="*" element={<Navigate to="/dashboard" replace />} />
           </Routes>
         </main>

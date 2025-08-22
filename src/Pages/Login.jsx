@@ -5,40 +5,32 @@ import "react-toastify/dist/ReactToastify.css";
 import api from "../Services/api";
 import { useAuth } from "../Context/AuthContext";
 import "../Styles/login.css"; // CSS file
-
+import { useEffect } from "react";
 export default function Login() {
-  const [form, setForm] = useState({ email: "", password: "" });
+ const [form, setForm] = useState({ email: "", password: "" });
   const [loading, setLoading] = useState(false);
-  const { login } = useAuth();
+  const { login, token, role } = useAuth();
   const navigate = useNavigate();
-  const location = useLocation();
-  const redirectTo = location.state?.from?.pathname || "/dashboard";
 
-  const onChange = (e) =>
-    setForm({ ...form, [e.target.name]: e.target.value });
+  const onChange = (e) => setForm({ ...form, [e.target.name]: e.target.value });
+
+  // If already logged in, redirect based on role
+  useEffect(() => {
+    if (token) {
+      if (role === "admin") navigate("/User", { replace: true });
+      else navigate("/Students", { replace: true });
+    }
+  }, [token, role, navigate]);
 
   const onSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
-
     try {
       const res = await api.post("/auth/login", form);
-      const token = res.data.token;
-      const roles = res?.data?.user?.role;
-      localStorage.setItem("roles", roles);
-      login(token);
+      const newToken = res.data.token;
+      const userRole = res?.data?.user?.role;
 
-      // Decode token for redirect
-      const payload = JSON.parse(atob(token.split(".")[1]));
-      const role = payload.role || "user";
-
-      toast.success("Login successful!", { autoClose: 2000 });
-
-      if (role === "admin") {
-        navigate("/User", { replace: true });
-      } else {
-        navigate("/Students", { replace: true });
-      }
+      login(newToken, userRole); // ✅ store token + role
     } catch (err) {
       const msg = err?.response?.data?.error || "Invalid email or password";
       toast.error(msg, { autoClose: 2000 });

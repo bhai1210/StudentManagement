@@ -1,41 +1,41 @@
-import { createContext, useContext, useEffect, useMemo, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { toast } from 'react-toastify'; // ✅ import toast
+import { createContext, useContext, useEffect, useMemo, useState } from "react";
+import { toast } from "react-toastify";
 
 const AuthContext = createContext(null);
 
 export function AuthProvider({ children }) {
-  const [token, setToken] = useState(() => localStorage.getItem('token') || '');
-
-  const navigate = useNavigate();
+  const [token, setToken] = useState(() => localStorage.getItem("token") || "");
+  const [role, setRole] = useState(() => localStorage.getItem("roles") || "");
 
   useEffect(() => {
     if (token) {
-      localStorage.setItem('token', token);
+      localStorage.setItem("token", token);
+      if (role) localStorage.setItem("roles", role);
     } else {
-      localStorage.removeItem('token');
-    
+      localStorage.removeItem("token");
+      localStorage.removeItem("roles");
     }
-  }, [token]);
+  }, [token, role]);
 
-  const login = (newToken) => {
+  const login = (newToken, userRole) => {
     setToken(newToken);
-    toast.success('Login successful!'); // ✅ Login toast
+    setRole(userRole);
+    toast.success("Login successful!");
   };
 
   const logout = () => {
-    setToken('');
-    toast.info('You have been logged out.'); // ✅ Logout toast
-    localStorage.removeItem("roles")
-    navigate('/login');
+    setToken("");
+    setRole("");
+    toast.info("You have been logged out.");
   };
 
-  const value = useMemo(() => ({ token, login, logout }), [token]);
+  const value = useMemo(() => ({ token, role, login, logout }), [token, role]);
+
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 }
 
 export function useAuth() {
   const ctx = useContext(AuthContext);
-  if (!ctx) throw new Error('useAuth must be used within AuthProvider');
+  if (!ctx) throw new Error("useAuth must be used within AuthProvider");
   return ctx;
 }

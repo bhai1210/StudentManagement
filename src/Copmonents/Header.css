@@ -1,0 +1,44 @@
+.app-header {
+  display: flex;
+  justify-content: space-between;
+ 
+}
+
+.header-title {
+  font-size: 1.5rem;
+  font-weight: bold;
+  margin: 0;
+}
+
+.hamburger-btn {
+ 
+  border: none;
+  color: black;
+  font-size: 1.8rem;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+}
+
+
+/* Default styles (for large screens) */
+.hamburger-btn {
+  display: none; /* hide by default on large screens */
+}
+
+/* Medium and small screens */
+@media (max-width: 888px) {
+  .hamburger-btn {
+    display: flex; /* show on medium and small screens */
+  }
+}
+
+/* Optional: adjust header layout for smaller screens */
+@media (max-width: 888px) {
+  .app-header {
+    justify-content: space-between;
+  }
+}
+
+
+

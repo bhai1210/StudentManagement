@@ -2,9 +2,9 @@ import React, { useEffect, useState } from "react";
 import {
   Table, TableBody, TableCell, TableContainer, TableHead, TableRow,
   Paper, Button, Dialog, DialogTitle, DialogContent, DialogActions,
-  TextField, Select, MenuItem, IconButton, Typography, Box
+  TextField, Select, MenuItem, IconButton, Box
 } from "@mui/material";
-import { Delete, Edit, Add } from "@mui/icons-material";
+import { Delete, Add } from "@mui/icons-material";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { motion } from "framer-motion";
@@ -16,9 +16,6 @@ export default function User() {
 
   // Dialog states
   const [openAdd, setOpenAdd] = useState(false);
-  const [openEdit, setOpenEdit] = useState(false);
-  const [selectedUser, setSelectedUser] = useState(null);
-
   const [formData, setFormData] = useState({ email: "", password: "", role: "user" });
 
   // Fetch users
@@ -28,7 +25,6 @@ export default function User() {
       const res = await api.get("/users");
       setUsers(res.data);
     } catch (err) {
-      // toast.error("Failed to fetch users");
       console.error(err);
     } finally {
       setLoading(false);
@@ -59,33 +55,19 @@ export default function User() {
     setOpenAdd(true);
   };
 
-  // Open Edit dialog
-  const openEditDialog = (user) => {
-    setSelectedUser(user);
-    setFormData({ email: user.email, password: "", role: user.role });
-    setOpenEdit(true);
-  };
-
-  // Handle Save (Add/Edit)
+  // Handle Save (Add)
   const handleSave = async () => {
-    if (!formData.email || (!formData.password && !selectedUser)) {
+    if (!formData.email || !formData.password) {
       toast.error("Email and password are required");
       return;
     }
     try {
-      if (openAdd) {
-        await api.post("/users", formData);
-        toast.success("Teacher added successfully");
-      } else if (openEdit && selectedUser) {
-        await api.put(`/users/${selectedUser._id}`, formData);
-        toast.success("Teacher updated successfully");
-      }
+      await api.post("/users", formData);
+      toast.success("Teacher added successfully");
       setOpenAdd(false);
-      setOpenEdit(false);
-      setSelectedUser(null);
       fetchUsers();
     } catch (err) {
-      toast.error("Failed to save user");
+      toast.error("Failed to add user");
       console.error(err);
     }
   };
@@ -96,32 +78,21 @@ export default function User() {
 
       {/* Header */}
       <Box display="flex" justifyContent="space-between" alignItems="center" mt={2} mb={2}>
-        <Typography variant="h5">User Management</Typography>
-        <Box>
-          <Button variant="contained" startIcon={<Add />} onClick={openAddDialog}>
-            Add User
-          </Button>
-        </Box>
+        <Button variant="contained" startIcon={<Add />} onClick={openAddDialog}>
+          Add User
+        </Button>
       </Box>
 
       {/* Users Table */}
       <TableContainer
         component={Paper}
         elevation={3}
-        sx={{
-          width: "100%",
-          overflowX: "auto",   // ✅ Horizontal scroll on small screens
-        }}
+        sx={{ width: "100%", overflowX: "auto" }}
       >
-        <Table
-          sx={{
-            minWidth: 600,      // ✅ Prevent table from shrinking too much
-          }}
-        >
+        <Table sx={{ minWidth: 600 }}>
           <TableHead>
             <TableRow>
               <TableCell>Email</TableCell>
-              <TableCell>Password</TableCell>
               <TableCell>Role</TableCell>
               <TableCell align="center">Actions</TableCell>
             </TableRow>
@@ -129,7 +100,7 @@ export default function User() {
           <TableBody>
             {users.length === 0 ? (
               <TableRow>
-                <TableCell colSpan={4} align="center">
+                <TableCell colSpan={3} align="center">
                   {loading ? "Loading..." : "No users available."}
                 </TableCell>
               </TableRow>
@@ -142,12 +113,8 @@ export default function User() {
                   transition={{ duration: 0.3 }}
                 >
                   <TableCell>{user.email}</TableCell>
-                  <TableCell>••••••</TableCell>
                   <TableCell>{user.role === "admin" ? "Head Master" : "Teacher"}</TableCell>
                   <TableCell align="center">
-                    <IconButton color="primary" onClick={() => openEditDialog(user)}>
-                      <Edit />
-                    </IconButton>
                     <IconButton color="error" onClick={() => handleDelete(user)}>
                       <Delete />
                     </IconButton>
@@ -159,17 +126,14 @@ export default function User() {
         </Table>
       </TableContainer>
 
-      {/* Add/Edit Dialog */}
+      {/* Add Dialog */}
       <Dialog
         fullWidth
         maxWidth="sm"
-        open={openAdd || openEdit}
-        onClose={() => {
-          setOpenAdd(false);
-          setOpenEdit(false);
-        }}
+        open={openAdd}
+        onClose={() => setOpenAdd(false)}
       >
-        <DialogTitle>{openAdd ? "Add User" : "Edit User"}</DialogTitle>
+        <DialogTitle>Add User</DialogTitle>
         <DialogContent>
           <TextField
             label="Email"
@@ -185,7 +149,6 @@ export default function User() {
             type="password"
             fullWidth
             margin="dense"
-            placeholder={openEdit ? "Leave blank to keep current" : ""}
           />
           <Select
             value={formData.role}
@@ -199,7 +162,7 @@ export default function User() {
           </Select>
         </DialogContent>
         <DialogActions>
-          <Button onClick={() => { setOpenAdd(false); setOpenEdit(false); }} color="secondary">
+          <Button onClick={() => setOpenAdd(false)} color="secondary">
             Cancel
           </Button>
           <Button onClick={handleSave} variant="contained" color="primary">
