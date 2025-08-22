@@ -61,8 +61,8 @@ export default function App() {
       {/* Main content */}
       <div className="app-main">
         {/* Topbar */}
-        <header className="topbar">
-          <h1  className="title ">Managment</h1>
+        <header >
+          <h1  className="title ">Student Managment</h1>
           <button
             className="hamburger"
             onClick={() => setSidebarOpen((prev) => !prev)}

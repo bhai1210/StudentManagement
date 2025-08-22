@@ -1,9 +1,10 @@
 import React from 'react'
+import ExtraCrudOne from '../ExtraCrud/ExtraCrudOne/ExtraCrudOne'
 
 function Dashboard() {
   return (
     <div>
-      welcome Student management app
+     <ExtraCrudOne />
     </div>
   )
 }
