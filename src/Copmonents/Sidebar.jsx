@@ -20,6 +20,7 @@ export default function Sidebar({ role, isOpen, setIsOpen }) {
       { label: "Student Management", path: "/Students" },
       { label: "Classes Making", path: "/ClassCreate" },
         { label: "Extra Information", path: "/Info" },
+        {label:"Student Info by image",path:"/StudentInfo"}
     ],
   };
 
