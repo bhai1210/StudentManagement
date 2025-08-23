@@ -13,6 +13,7 @@ import {
   Grid,
   Box,
 } from "@mui/material";
+import { Api } from "@mui/icons-material";
 
 export default function RazorpayPayment() {
   const [amount, setAmount] = useState(1);
@@ -20,7 +21,7 @@ export default function RazorpayPayment() {
 
   const fetchPayments = async () => {
     try {
-      const { data } = await axios.get("http://localhost:5000/payments/history");
+      const { data } = await Api.get("/payments/history");
       setPayments(data.payments);
     } catch (err) {
       console.error(err);
@@ -33,7 +34,7 @@ export default function RazorpayPayment() {
 
   const handlePayment = async () => {
     try {
-      const { data } = await axios.post("http://localhost:5000/payments/create-order", { amount });
+      const { data } = await axios.post("/payments/create-order", { amount });
       const { order } = data;
 
       const options = {
@@ -43,7 +44,7 @@ export default function RazorpayPayment() {
         name: "Student Payments",
         order_id: order.id,
         handler: async (response) => {
-          await axios.post("http://localhost:5000/payments/verify-payment", {
+          await axios.post("/payments/verify-payment", {
             razorpay_order_id: response.razorpay_order_id,
             razorpay_payment_id: response.razorpay_payment_id,
             razorpay_signature: response.razorpay_signature,
