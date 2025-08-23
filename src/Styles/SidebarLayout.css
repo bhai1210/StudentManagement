@@ -17,9 +17,9 @@ html, body {
   position: fixed;
   top: 0;
   left: 0;
-  height: 100vh;
+  height: full;
   width: 260px;
-  background: #1e1e2f; /* Modern dark sidebar */
+  background: #0d3b66; /* Modern dark sidebar */
   color: #fff;
   padding: 20px;
   box-sizing: border-box;
@@ -111,7 +111,7 @@ html, body {
   display: block;
   margin-top: 30px;
   padding: 12px 18px;
-  background: linear-gradient(135deg, #4a90e2, #357ab8); /* professional blue gradient */
+ background: linear-gradient(135deg, #ef4444, #dc2626); /* modern red shades */
   border: none; /* removed border */
   border-radius: 12px; /* slightly more rounded */
   color: #ffffff;

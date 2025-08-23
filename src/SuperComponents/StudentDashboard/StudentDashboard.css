@@ -1,0 +1,229 @@
+/* 🌟 Dashboard Container */
+.dashboard {
+  padding: 24px;
+  min-height: 100vh;
+  background: linear-gradient(135deg, #eef2f6, #f8fafc);
+  font-family: "Poppins", Arial, sans-serif;
+  color: #1e293b;
+  transition: background 0.5s ease;
+}
+
+/* 🌟 Header */
+.dashboard-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 32px;
+  flex-wrap: wrap;
+  gap: 16px;
+}
+
+.dashboard-header h1 {
+  font-size: 28px;
+  font-weight: 700;
+  color: #0f172a;
+  letter-spacing: 0.5px;
+  transition: color 0.3s ease;
+}
+
+.actions {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.actions input {
+  padding: 10px 14px;
+  border: 1px solid #cbd5e1;
+  border-radius: 8px;
+  outline: none;
+  transition: all 0.3s ease;
+}
+
+.actions input:focus {
+  border-color: #6366f1;
+  box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.2);
+}
+
+/* 🌟 Buttons */
+.btn-primary {
+  background: linear-gradient(135deg, #6366f1, #4338ca);
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 10px;
+  cursor: pointer;
+  font-weight: 600;
+  transition: all 0.35s ease;
+  box-shadow: 0 4px 14px rgba(99, 102, 241, 0.3);
+}
+
+.btn-primary:hover {
+  transform: translateY(-2px) scale(1.03);
+  box-shadow: 0 6px 20px rgba(99, 102, 241, 0.45);
+}
+
+/* 🌟 KPI Section */
+.kpi-section {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 24px;
+  margin-bottom: 32px;
+}
+
+.kpi-card {
+  background: white;
+  padding: 20px;
+  border-radius: 16px;
+  box-shadow: 0 6px 16px rgba(0,0,0,0.08);
+  text-align: center;
+  transition: transform 0.35s ease, box-shadow 0.35s ease;
+}
+
+.kpi-card:hover {
+  transform: translateY(-6px);
+  box-shadow: 0 12px 28px rgba(0,0,0,0.12);
+}
+
+.kpi-label {
+  font-size: 14px;
+  color: #64748b;
+}
+
+.kpi-value {
+  font-size: 28px;
+  font-weight: 700;
+  margin: 12px 0;
+  color: #1e293b;
+}
+
+/* 🌟 Chips */
+.chip {
+  display: inline-block;
+  padding: 5px 12px;
+  border-radius: 14px;
+  font-size: 13px;
+  font-weight: 500;
+  color: white;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+  transition: transform 0.3s ease;
+}
+
+.chip:hover {
+  transform: scale(1.05);
+}
+
+.chip-green { background: linear-gradient(135deg, #10b981, #059669); }
+.chip-blue { background: linear-gradient(135deg, #3b82f6, #1d4ed8); }
+.chip-teal { background: linear-gradient(135deg, #14b8a6, #0d9488); }
+.chip-orange { background: linear-gradient(135deg, #f97316, #c2410c); }
+
+/* 🌟 Charts */
+.charts-grid {
+  display: grid;
+  grid-template-columns: 2fr 1fr;
+  gap: 24px;
+  margin-bottom: 32px;
+}
+
+.chart-card {
+  background: white;
+  padding: 20px;
+  border-radius: 16px;
+  box-shadow: 0 6px 16px rgba(0,0,0,0.08);
+  transition: all 0.3s ease;
+}
+
+.chart-card:hover {
+  transform: translateY(-4px);
+}
+
+.chart-box {
+  height: 280px;
+}
+
+/* 🌟 Payments List */
+.payments-list {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  margin-top: 14px;
+}
+
+.payment-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: #f8fafc;
+  padding: 12px 16px;
+  border-radius: 12px;
+  transition: all 0.3s ease;
+}
+
+.payment-item:hover {
+  background: #eef2ff;
+  transform: translateX(4px);
+}
+
+.payment-student {
+  font-weight: 600;
+  color: #1e293b;
+}
+
+.payment-right {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.payment-amount {
+  font-weight: bold;
+  color: #3b82f6;
+}
+
+.status {
+  padding: 4px 10px;
+  border-radius: 10px;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.status-paid { background: #dcfce7; color: #166534; }
+.status-pending { background: #fef9c3; color: #92400e; }
+.status-failed { background: #fee2e2; color: #b91c1c; }
+
+/* 🌟 Footer Button */
+.footer-btn {
+  text-align: center;
+  margin-top: 24px;
+}
+
+/* 🌟 Responsiveness */
+@media (max-width: 992px) {
+  .charts-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 576px) {
+  .dashboard {
+    padding: 16px;
+  }
+
+  .dashboard-header h1 {
+    font-size: 22px;
+  }
+
+  .btn-primary {
+    padding: 8px 16px;
+    font-size: 14px;
+  }
+
+  .kpi-value {
+    font-size: 24px;
+  }
+
+  .chart-box {
+    height: 220px;
+  }
+}

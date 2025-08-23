@@ -14,8 +14,8 @@ export default function Sidebar({ role, isOpen, setIsOpen }) {
   // Define menu items for each role
   const menuItems = {
     admin: [
-      { label: "Manage Teachers", path: "/User" },
-       { label: "categories", path: "/category" },
+      { label: "Dashboard", path: "/User" },
+       { label: "Manage Staff", path: "/staff" },
     ],
     user: [
       { label: "Student Management", path: "/Students" },
@@ -43,7 +43,7 @@ export default function Sidebar({ role, isOpen, setIsOpen }) {
 
   return (
     <aside ref={sidebarRef} className={`sidebar ${isOpen ? "open" : ""}`}>
-      <h2 className="logo">MyApp</h2>
+      <h2 className="logo">Management</h2>
 
       <ul className="menu-list">
         {items.map((item, index) => (

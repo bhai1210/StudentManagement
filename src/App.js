@@ -21,6 +21,7 @@ import ExtraCrud from "./ExtraCrud/ExtraCrud";
 import ExtraCrudOne from "./ExtraCrud/ExtraCrudOne/ExtraCrudOne";
 
 import "./App.css";
+import StudentDashboard from "./SuperComponents/StudentDashboard/StudentDashboard";
 
 export default function App() {
   const { token, role } = useAuth();
@@ -79,7 +80,15 @@ export default function App() {
               path="/User"
               element={
                 <PrivateRoute>
-                  <User />
+           <StudentDashboard />
+                </PrivateRoute>
+              }
+            />
+              <Route
+              path="/staff"
+              element={
+                <PrivateRoute>
+           <User />
                 </PrivateRoute>
               }
             />

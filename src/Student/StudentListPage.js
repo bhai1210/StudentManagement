@@ -231,30 +231,42 @@ export default function StudentListPage() {
           }}
         >
           <Table size={isMobile ? "small" : "medium"}>
-            <TableHead sx={{ bgcolor: "#e3f2fd" }}>
-              <TableRow>
-                {[
-                  "name",
-                  "age",
-                  "email",
-                  "class",
-                  "school",
-                  "fees",
-                  "phoneNumber",
-                ].map((field) => (
-                  <TableCell key={field} sx={{ fontWeight: 600 }}>
-                    <TableSortLabel
-                      active={sortField === field}
-                      direction={sortField === field ? sortOrder : "asc"}
-                      onClick={() => handleSort(field)}
-                    >
-                      {field.charAt(0).toUpperCase() + field.slice(1)}
-                    </TableSortLabel>
-                  </TableCell>
-                ))}
-                <TableCell>Actions</TableCell>
-              </TableRow>
-            </TableHead>
+      <TableHead
+  sx={{
+    bgcolor: "#0d3b66",
+    "& .MuiTableCell-root": { color: "white" },
+    "& .MuiTableSortLabel-root.Mui-active": {
+      color: "yellow !important", // active label text
+    },
+    "& .MuiTableSortLabel-root.Mui-active .MuiTableSortLabel-icon": {
+      color: "yellow !important", // active arrow icon
+    },
+  }}
+>
+  <TableRow>
+    {[
+      "name",
+      "age",
+      "email",
+      "class",
+      "school",
+      "fees",
+      "phoneNumber",
+    ].map((field) => (
+      <TableCell key={field} sx={{ fontWeight: 600 }}>
+        <TableSortLabel
+          active={sortField === field}
+          direction={sortField === field ? sortOrder : "asc"}
+          onClick={() => handleSort(field)}
+        >
+          {field.charAt(0).toUpperCase() + field.slice(1)}
+        </TableSortLabel>
+      </TableCell>
+    ))}
+    <TableCell>Actions</TableCell>
+  </TableRow>
+</TableHead>
+
 
             <TableBody>
               {students.length === 0 ? (

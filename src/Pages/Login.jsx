@@ -14,10 +14,11 @@ export default function Login() {
 
   const onChange = (e) => setForm({ ...form, [e.target.name]: e.target.value });
 
+  console.log(role,"my roles")
   // If already logged in, redirect based on role
   useEffect(() => {
     if (token) {
-      if (role === "admin") navigate("/User", { replace: true });
+      if (role === "admin") navigate("/dashboard", { replace: true });
       else navigate("/Students", { replace: true });
     }
   }, [token, role, navigate]);
@@ -79,7 +80,7 @@ export default function Login() {
 
               <div className="login-options">
                 <label className="remember-me">
-                  <input type="checkbox" /> Remember me
+                  {/* <input type="checkbox" /> Remember me */}
                 </label>
                 <button
                   type="button"

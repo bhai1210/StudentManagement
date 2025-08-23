@@ -1,5 +1,4 @@
 import { useState } from "react";
-import axios from "axios";
 import {
   Box,
   Button,
@@ -23,10 +22,7 @@ export default function ForgotPassword() {
     setLoading(true);
 
     try {
-      const res = await api.post(
-        "/auth/forgot-password",
-        { email }
-      );
+      const res = await api.post("/auth/forgot-password", { email });
       toast.success(res.data.message || "Password reset link sent! Check your email.");
       setEmail("");
     } catch (err) {
@@ -38,17 +34,23 @@ export default function ForgotPassword() {
 
   return (
     <>
-      <section style={{ height: "100vh" }}>
-        <Container maxWidth="xl" sx={{ height: "100%" }}>
+      <Box
+        sx={{
+          height: "100vh",
+          display: "flex",
+          alignItems: "center",
+          bgcolor: "linear-gradient(to right, #e3f2fd, #bbdefb)",
+        }}
+      >
+        <Container maxWidth="xl">
           <Grid
             container
-            spacing={2}
+            spacing={4}
             alignItems="center"
             justifyContent="center"
-            sx={{ height: "100%" }}
           >
-            {/* Left Image */}
-            <Grid item md={6} lg={6} xl={5}>
+            {/* Left Image - hidden on xs */}
+            <Grid item md={6} lg={6} xl={5} sx={{ display: { xs: "none", md: "block" } }}>
               <img
                 src="https://mdbcdn.b-cdn.net/img/Photos/new-templates/bootstrap-login-form/draw2.webp"
                 alt="Forgot Password illustration"
@@ -57,22 +59,30 @@ export default function ForgotPassword() {
             </Grid>
 
             {/* Right Form */}
-            <Grid item xs={12} md={6} lg={6} xl={4}>
+            <Grid item xs={12} md={6} lg={5} xl={4}>
               <Paper
                 elevation={6}
-                sx={{ p: 4, borderRadius: 3, bgcolor: "#fff" }}
+                sx={{
+                  p: { xs: 3, sm: 4 },
+                  borderRadius: 3,
+                  bgcolor: "#fff",
+                }}
               >
-                {/* Social Buttons */}
-            
-
-                {/* Divider */}
-             
-
-                {/* Forgot Password Form */}
-                <Typography variant="h5" fontWeight="bold" mb={2} textAlign="center">
+                <Typography
+                  variant="h5"
+                  fontWeight="bold"
+                  mb={2}
+                  textAlign="center"
+                  color="primary"
+                >
                   Forgot Password
                 </Typography>
-                <Typography variant="body2" color="text.secondary" mb={3} textAlign="center">
+                <Typography
+                  variant="body2"
+                  color="text.secondary"
+                  mb={3}
+                  textAlign="center"
+                >
                   Enter your registered email to receive a password reset link.
                 </Typography>
 
@@ -97,7 +107,14 @@ export default function ForgotPassword() {
                     variant="contained"
                     size="large"
                     disabled={loading}
-                    sx={{ mt: 1, py: 1.2 }}
+                    sx={{
+                      mt: 1,
+                      py: 1.2,
+                      background: "linear-gradient(90deg, #1976d2, #42a5f5)",
+                      "&:hover": {
+                        background: "linear-gradient(90deg, #1565c0, #1e88e5)",
+                      },
+                    }}
                   >
                     {loading ? (
                       <CircularProgress size={24} color="inherit" />
@@ -107,13 +124,21 @@ export default function ForgotPassword() {
                   </Button>
                 </Box>
               </Paper>
+
+              {/* Footer */}
+              <Typography
+                variant="caption"
+                display="block"
+                textAlign="center"
+                mt={3}
+                color="text.secondary"
+              >
+                © {new Date().getFullYear()} Your Company. All rights reserved.
+              </Typography>
             </Grid>
           </Grid>
         </Container>
-
-        {/* Footer */}
-   
-      </section>
+      </Box>
 
       {/* Toast Notification */}
       <ToastContainer position="top-right" autoClose={3000} />

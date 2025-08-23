@@ -24,11 +24,11 @@ html, body {
    ====================== */
 .sidebar {
   width: 250px;
-  background: #0288d1; /* Modern blue */
+  background: #0d3b66; /* Modern blue */
   color: #fff;
   padding: 25px 20px;
   flex-shrink: 0;
-  height: 100vh;
+  height: auto;
   box-sizing: border-box;
   display: flex;
   flex-direction: column;
