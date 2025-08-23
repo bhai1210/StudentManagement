@@ -15,6 +15,7 @@ export default function Sidebar({ role, isOpen, setIsOpen }) {
   const menuItems = {
     admin: [
       { label: "Manage Teachers", path: "/User" },
+       { label: "categories", path: "/category" },
     ],
     user: [
       { label: "Student Management", path: "/Students" },

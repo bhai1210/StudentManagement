@@ -110,22 +110,25 @@ html, body {
 .logout-btn {
   display: block;
   margin-top: 30px;
-  padding: 12px 16px;
-  background: linear-gradient(90deg, #ff4b2b, #ff416c);
-  border-radius: 10px;
-  color: #fff;
+  padding: 12px 18px;
+  background: linear-gradient(135deg, #4a90e2, #357ab8); /* professional blue gradient */
+  border: none; /* removed border */
+  border-radius: 12px; /* slightly more rounded */
+  color: #ffffff;
   font-size: 16px;
-  font-weight: 500;
+  font-weight: 600;
   text-align: center;
-  transition: all 0.3s ease, box-shadow 0.3s ease;
+  transition: all 0.3s ease;
   cursor: pointer;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15); /* subtle shadow */
 }
 
 .logout-btn:hover {
-  background: linear-gradient(90deg, #ff6a36, #ff1744);
-  transform: scale(1.05);
-  box-shadow: 0 6px 16px rgba(255, 65, 108, 0.4);
+  background: linear-gradient(135deg, #357ab8, #2c5d95); /* darker gradient on hover */
+  transform: translateY(-2px); /* smooth lift effect */
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
 }
+
 
 /* ======================
    Main Content
