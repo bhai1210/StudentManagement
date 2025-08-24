@@ -141,7 +141,7 @@ body {
   color: #0d3b66;
   font-weight: 500;
   cursor: pointer;
-  text-decoration: underline;
+  text-decoration: none;
   transition: color 0.2s ease;
 }
 
@@ -191,7 +191,7 @@ body {
   color: #e63946;
   font-weight: 600;
   cursor: pointer;
-  text-decoration: underline;
+  text-decoration: none;
   transition: color 0.2s ease;
 }
 

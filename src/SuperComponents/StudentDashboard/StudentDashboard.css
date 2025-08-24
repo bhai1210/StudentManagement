@@ -5,7 +5,7 @@
   background: linear-gradient(135deg, #eef2f6, #f8fafc);
   font-family: "Poppins", Arial, sans-serif;
   color: #1e293b;
-  transition: background 0.5s ease;
+  transition: background 0.6s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 /* 🌟 Header */
@@ -21,9 +21,9 @@
 .dashboard-header h1 {
   font-size: 28px;
   font-weight: 700;
-  color: #0f172a;
+  color: #0d3b66;
   letter-spacing: 0.5px;
-  transition: color 0.3s ease;
+  transition: color 0.35s ease;
 }
 
 .actions {
@@ -37,30 +37,31 @@
   border: 1px solid #cbd5e1;
   border-radius: 8px;
   outline: none;
-  transition: all 0.3s ease;
+  transition: all 0.35s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .actions input:focus {
-  border-color: #6366f1;
-  box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.2);
+  border-color: #0d3b66;
+  box-shadow: 0 0 0 4px rgba(13, 59, 102, 0.2);
 }
 
 /* 🌟 Buttons */
 .btn-primary {
-  background: linear-gradient(135deg, #6366f1, #4338ca);
+  background: linear-gradient(135deg, #0d3b66, #0a2f52);
   color: white;
   border: none;
   padding: 10px 20px;
-  border-radius: 10px;
+  border-radius: 12px;
   cursor: pointer;
   font-weight: 600;
-  transition: all 0.35s ease;
-  box-shadow: 0 4px 14px rgba(99, 102, 241, 0.3);
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 0 4px 14px rgba(13, 59, 102, 0.25);
+  transform: translateZ(0);
 }
 
 .btn-primary:hover {
-  transform: translateY(-2px) scale(1.03);
-  box-shadow: 0 6px 20px rgba(99, 102, 241, 0.45);
+  transform: translateY(-3px) scale(1.04);
+  box-shadow: 0 8px 24px rgba(13, 59, 102, 0.35);
 }
 
 /* 🌟 KPI Section */
@@ -77,11 +78,13 @@
   border-radius: 16px;
   box-shadow: 0 6px 16px rgba(0,0,0,0.08);
   text-align: center;
-  transition: transform 0.35s ease, box-shadow 0.35s ease;
+  transition: transform 0.45s cubic-bezier(0.4, 0, 0.2, 1),
+              box-shadow 0.45s cubic-bezier(0.4, 0, 0.2, 1);
+  animation: fadeInUp 0.6s ease both;
 }
 
 .kpi-card:hover {
-  transform: translateY(-6px);
+  transform: translateY(-8px) scale(1.02);
   box-shadow: 0 12px 28px rgba(0,0,0,0.12);
 }
 
@@ -94,27 +97,29 @@
   font-size: 28px;
   font-weight: 700;
   margin: 12px 0;
-  color: #1e293b;
+  color: #0d3b66;
 }
 
 /* 🌟 Chips */
 .chip {
   display: inline-block;
-  padding: 5px 12px;
+  padding: 6px 14px;
   border-radius: 14px;
   font-size: 13px;
   font-weight: 500;
   color: white;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-  transition: transform 0.3s ease;
+  box-shadow: 0 3px 10px rgba(0,0,0,0.1);
+  transition: transform 0.35s ease, box-shadow 0.35s ease;
+  animation: fadeIn 0.6s ease both;
 }
 
 .chip:hover {
-  transform: scale(1.05);
+  transform: scale(1.08);
+  box-shadow: 0 6px 16px rgba(0,0,0,0.15);
 }
 
 .chip-green { background: linear-gradient(135deg, #10b981, #059669); }
-.chip-blue { background: linear-gradient(135deg, #3b82f6, #1d4ed8); }
+.chip-blue { background: linear-gradient(135deg, #0d3b66, #0a2f52); } /* Updated */
 .chip-teal { background: linear-gradient(135deg, #14b8a6, #0d9488); }
 .chip-orange { background: linear-gradient(135deg, #f97316, #c2410c); }
 
@@ -131,11 +136,13 @@
   padding: 20px;
   border-radius: 16px;
   box-shadow: 0 6px 16px rgba(0,0,0,0.08);
-  transition: all 0.3s ease;
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  animation: fadeIn 0.6s ease both;
 }
 
 .chart-card:hover {
-  transform: translateY(-4px);
+  transform: translateY(-6px) scale(1.01);
+  box-shadow: 0 10px 24px rgba(0,0,0,0.12);
 }
 
 .chart-box {
@@ -157,12 +164,13 @@
   background: #f8fafc;
   padding: 12px 16px;
   border-radius: 12px;
-  transition: all 0.3s ease;
+  transition: all 0.35s ease;
+  animation: fadeInUp 0.5s ease both;
 }
 
 .payment-item:hover {
-  background: #eef2ff;
-  transform: translateX(4px);
+  background: #e6f0fa;
+  transform: translateX(6px);
 }
 
 .payment-student {
@@ -178,7 +186,7 @@
 
 .payment-amount {
   font-weight: bold;
-  color: #3b82f6;
+  color: #0d3b66;
 }
 
 .status {
@@ -196,6 +204,17 @@
 .footer-btn {
   text-align: center;
   margin-top: 24px;
+}
+
+/* 🌟 Animations */
+@keyframes fadeIn {
+  from { opacity: 0; transform: scale(0.95); }
+  to { opacity: 1; transform: scale(1); }
+}
+
+@keyframes fadeInUp {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
 }
 
 /* 🌟 Responsiveness */
