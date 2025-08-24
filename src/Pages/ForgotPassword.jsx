@@ -39,7 +39,8 @@ export default function ForgotPassword() {
           height: "100vh",
           display: "flex",
           alignItems: "center",
-          bgcolor: "linear-gradient(to right, #e3f2fd, #bbdefb)",
+          bgcolor: "linear-gradient(135deg, #e6f2f9, #f9fbfd)", // ✅ lighter clean bg
+          px: 2,
         }}
       >
         <Container maxWidth="xl">
@@ -73,7 +74,7 @@ export default function ForgotPassword() {
                   fontWeight="bold"
                   mb={2}
                   textAlign="center"
-                  color="primary"
+                  color="#0d3b66" // ✅ brand color
                 >
                   Forgot Password
                 </Typography>
@@ -109,10 +110,16 @@ export default function ForgotPassword() {
                     disabled={loading}
                     sx={{
                       mt: 1,
-                      py: 1.2,
-                      background: "linear-gradient(90deg, #1976d2, #42a5f5)",
+                      py: 1.3,
+                      fontWeight: "bold",
+                      borderRadius: "12px",
+                      backgroundColor: "#0d3b66", // ✅ brand button
+                      boxShadow: "0px 4px 14px rgba(13, 59, 102, 0.3)",
+                      transition: "all 0.3s ease",
                       "&:hover": {
-                        background: "linear-gradient(90deg, #1565c0, #1e88e5)",
+                        backgroundColor: "#094067", // ✅ darker hover
+                        transform: "translateY(-2px)",
+                        boxShadow: "0px 6px 18px rgba(13, 59, 102, 0.4)",
                       },
                     }}
                   >
