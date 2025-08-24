@@ -1,0 +1,12 @@
+.dashboard { padding: 20px; font-family: "Segoe UI", sans-serif; background: #f4f6f8; }
+.dashboard-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px; flex-wrap: wrap; }
+.dashboard-header h1 { font-size: 1.8rem; color: #333; }
+.student-info p { margin: 4px 0; color: #555; }
+
+.kpi-section { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 18px; margin-bottom: 30px; }
+.kpi-card { background: #fff; padding: 16px; border-radius: 12px; box-shadow: 0px 4px 8px rgba(0,0,0,0.05); display: flex; flex-direction: column; gap: 6px; }
+.kpi-label { font-size: 0.9rem; color: #666; }
+.kpi-value { font-size: 1.6rem; font-weight: bold; }
+
+.charts-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 20px; }
+.chart-card { background: #fff; padding: 16px; border-radius: 12px; box-shadow: 0px 4px 8px rgba(0,0,0,0.05); }

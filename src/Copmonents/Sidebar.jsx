@@ -16,11 +16,14 @@ export default function Sidebar({ role, isOpen, setIsOpen }) {
     admin: [
       { label: "Dashboard", path: "/User" },
        { label: "Manage Staff", path: "/staff" },
+        { label: "Student Management", path: "/Students" },
+         { label: "Classes Making", path: "/ClassCreate" },
+        { label: "Extra Information", path: "/Info" },
     ],
     user: [
-      { label: "Student Management", path: "/Students" },
-      { label: "Classes Making", path: "/ClassCreate" },
-        { label: "Extra Information", path: "/Info" },
+      
+     { label: "Student Dashboard", path: "/BetaDashboard" },
+       { label: "Course Information", path: "/StudentDashboard" }
         // {label:"Student Info by image",path:"/StudentInfo"}
     ],
   };

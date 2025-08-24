@@ -22,6 +22,8 @@ import ExtraCrudOne from "./ExtraCrud/ExtraCrudOne/ExtraCrudOne";
 
 import "./App.css";
 import StudentDashboard from "./SuperComponents/StudentDashboard/StudentDashboard";
+import ClassesSuper from "./SuperComponents/ClassesSuper.jsx/classessuper";
+import BetaDashboard from "./SuperComponents/BetaDasboard/BetaDashboard";
 
 export default function App() {
   const { token, role } = useAuth();
@@ -35,7 +37,7 @@ export default function App() {
       if (role === "admin" && location.pathname === "/") {
         navigate("/User", { replace: true });
       } else if (role !== "admin" && location.pathname === "/") {
-        navigate("/Students", { replace: true });
+        navigate("/BetaDashboard", { replace: true });
       }
     }
   }, [token, role, navigate, location.pathname]);
@@ -45,6 +47,7 @@ export default function App() {
       <div className="app-public">
         <Routes>
           <Route path="/" element={<Login />} />
+          
           <Route path="/register" element={<Register />} />
           <Route path="/forgot-password" element={<ForgotPassword />} />
           <Route path="/reset-password/:token" element={<ResetPassword />} />
@@ -74,6 +77,22 @@ export default function App() {
                 <PrivateRoute>
                   <Dashboard />
                 </PrivateRoute>
+              }
+            />
+              <Route
+              path="/StudentDashboard"
+              element={
+                <PrivateRoute>
+                  <ClassesSuper />
+               </PrivateRoute>
+              }
+            />
+               <Route
+              path="/BetaDashboard"
+              element={
+                <PrivateRoute>
+                  <BetaDashboard />
+               </PrivateRoute>
               }
             />
             <Route
@@ -108,6 +127,7 @@ export default function App() {
                 </PrivateRoute>
               }
             />
+            
             <Route
               path="/ClassCreate"
               element={
