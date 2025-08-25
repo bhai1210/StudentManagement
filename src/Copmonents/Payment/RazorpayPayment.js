@@ -21,22 +21,22 @@ import { motion } from "framer-motion";
 import api from "../../Services/api";
 
 const courses = [
-  { id: 1, name: "Class 1", fee: 3000 },
-  { id: 2, name: "Class 2", fee: 3200 },
-  { id: 3, name: "Class 3", fee: 3400 },
-  { id: 4, name: "Class 4", fee: 3600 },
-  { id: 5, name: "Class 5", fee: 3800 },
-  { id: 6, name: "Class 6", fee: 4000 },
-  { id: 7, name: "Class 7", fee: 4200 },
-  { id: 8, name: "Class 8", fee: 4400 },
-  { id: 9, name: "Class 9", fee: 4600 },
-  { id: 10, name: "Class 10", fee: 4800 },
-  { id: 11, name: "Class 11 (Science)", fee: 6500 },
-  { id: 12, name: "Class 11 (Arts)", fee: 6000 },
-  { id: 13, name: "Class 11 (Information Tech)", fee: 7000 },
-  { id: 14, name: "Class 12 (Science)", fee: 7500 },
-  { id: 15, name: "Class 12 (Arts)", fee: 7000 },
-  { id: 16, name: "Class 12 (Information Tech)", fee: 8000 },
+  { id: 1, name: "Class 1", fee: 0.01 },
+  { id: 2, name: "Class 2", fee: 1 },
+  { id: 3, name: "Class 3", fee: 1 },
+  { id: 4, name: "Class 4", fee: 1 },
+  { id: 5, name: "Class 5", fee: 1 },
+  { id: 6, name: "Class 6", fee: 1 },
+  { id: 7, name: "Class 7", fee: 1 },
+  { id: 8, name: "Class 8", fee: 1 },
+  { id: 9, name: "Class 9", fee: 1 },
+  { id: 10, name: "Class 10", fee: 1 },
+  { id: 11, name: "Class 11 (Science)", fee: 1 },
+  { id: 12, name: "Class 11 (Arts)", fee: 1 },
+  { id: 13, name: "Class 11 (Information Tech)", fee: 1 },
+  { id: 14, name: "Class 12 (Science)", fee: 1 },
+  { id: 15, name: "Class 12 (Arts)", fee: 1 },
+  { id: 16, name: "Class 12 (Information Tech)", fee: 1 },
 ];
 
 export default function RazorpayPayment() {

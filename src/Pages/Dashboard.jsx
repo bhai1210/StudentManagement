@@ -1,14 +1,17 @@
 import React from 'react'
 import ExtraCrudOne from '../ExtraCrud/ExtraCrudOne/ExtraCrudOne'
-import RazorpayPayment from '../Copmonents/Payment/RazorpayPayment'
+
 import ClassesSuper from '../SuperComponents/ClassesSuper.jsx/classessuper'
 import StudentDashboard from '../SuperComponents/StudentDashboard/StudentDashboard'
-
+import RazorpayPayment from '../Copmonents/Payment/RazorpayPayment'
 function Dashboard() {
   return (
     <div>
    
-<StudentDashboard />
+  <RazorpayPayment />
+
+
+{/* <StudentDashboard /> */}
     </div>
   )
 }
