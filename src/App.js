@@ -24,6 +24,7 @@ import "./App.css";
 import StudentDashboard from "./SuperComponents/StudentDashboard/StudentDashboard";
 import ClassesSuper from "./SuperComponents/ClassesSuper.jsx/classessuper";
 import BetaDashboard from "./SuperComponents/BetaDasboard/BetaDashboard";
+import RazorpayPayment from "./Copmonents/Payment/RazorpayPayment";
 
 export default function App() {
   const { token, role } = useAuth();
@@ -92,6 +93,14 @@ export default function App() {
               element={
                 <PrivateRoute>
                   <BetaDashboard />
+               </PrivateRoute>
+              }
+            />
+             <Route
+              path="/razorpay"
+              element={
+                <PrivateRoute>
+                  <RazorpayPayment />
                </PrivateRoute>
               }
             />

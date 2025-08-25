@@ -18,7 +18,7 @@ export default function Sidebar({ role, isOpen, setIsOpen }) {
        { label: "Manage Staff", path: "/staff" },
         { label: "Student Management", path: "/Students" },
          { label: "Classes Making", path: "/ClassCreate" },
-        { label: "Extra Information", path: "/Info" },
+        { label: "Payement Gateway", path: "/razorpay" }
     ],
     user: [
       
