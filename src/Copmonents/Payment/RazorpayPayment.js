@@ -70,7 +70,7 @@ export default function RazorpayPayment() {
       const { order } = data;
 
       const options = {
-        key: "rzp_test_R7GC2ycNjp9T5Z",
+        key: "rzp_live_R9XuwBFRtEokgL",
         amount: order.amount,
         currency: order.currency,
         name: "Student Payments",
