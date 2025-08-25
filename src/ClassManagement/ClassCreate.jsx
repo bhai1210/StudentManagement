@@ -7,24 +7,24 @@ import {
   Table,
   Card,
   Spin,
-  Modal,
   Typography,
   Space,
   message,
   Row,
   Col,
 } from "antd";
+import { motion } from "framer-motion";
 
 const { Title } = Typography;
 
 function ClassCreate() {
   const [users, setUsers] = useState([]);
-  const [loading, setLoading] = useState(false);     // page/table loading
-  const [saving, setSaving] = useState(false);       // form submit loading
+  const [loading, setLoading] = useState(false);
+  const [saving, setSaving] = useState(false);
   const [editId, setEditId] = useState(null);
   const [form] = Form.useForm();
 
-  // fetch all classes
+  // Fetch all classes
   const fetchUsers = async () => {
     try {
       setLoading(true);
@@ -48,7 +48,7 @@ function ClassCreate() {
     fetchUsers();
   }, []);
 
-  // create or update class
+  // Create or update class
   const handleSubmit = async (values) => {
     try {
       setSaving(true);
@@ -68,14 +68,14 @@ function ClassCreate() {
       }
       await fetchUsers();
       form.resetFields();
-    } catch (err) {
+    } catch {
       message.error("Error saving class!");
     } finally {
       setSaving(false);
     }
   };
 
-  // edit handler
+  // Edit handler
   const onedit = (user) => {
     setEditId(user._id);
     form.setFieldsValue({
@@ -86,20 +86,20 @@ function ClassCreate() {
     });
   };
 
-  // delete handler with confirmation (return promise so AntD waits)
+  // Delete handler
   const deleteuser = async (id) => {
-  
-        try {
-          await axios
-            .delete(`https://student-management-backend-node-rd8.vercel.app/class/${id}`);
-          message.success("Class deleted successfully!");
-          await fetchUsers();
-        } catch {
-          message.error("Failed to delete class!");
-        }
-   
+    try {
+      await axios.delete(
+        `https://student-management-backend-node-rd8.vercel.app/class/${id}`
+      );
+      message.success("Class deleted successfully!");
+      await fetchUsers();
+    } catch {
+      message.error("Failed to delete class!");
+    }
   };
 
+  // Table columns
   const columns = [
     { title: "Name", dataIndex: "name", key: "name" },
     { title: "Subject", dataIndex: "subject", key: "subject" },
@@ -115,7 +115,12 @@ function ClassCreate() {
       key: "actions",
       render: (_, record) => (
         <Space wrap>
-          <Button type="primary" size="small" onClick={() => onedit(record)}>
+          <Button
+            type="primary"
+            size="small"
+            style={{ background: "#0d3b66", border: "none" }}
+            onClick={() => onedit(record)}
+          >
             Edit
           </Button>
           <Button danger size="small" onClick={() => deleteuser(record._id)}>
@@ -127,111 +132,150 @@ function ClassCreate() {
   ];
 
   return (
-    <div style={{ minHeight: "100vh", background: "#f0f5ff", padding: 24 }}>
-      <Card
-        bordered={false}
-        style={{
-          maxWidth: 1000,
-          margin: "0 auto",
-          borderRadius: 12,
-          boxShadow: "0 4px 20px rgba(0,0,0,0.1)",
-        }}
+    <div style={{ minHeight: "100vh", padding: 24, background: "#f5f7fa" }}>
+      <motion.div
+        initial={{ opacity: 0, y: 40 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.6, ease: "easeOut" }}
       >
-        <Title level={2} style={{ textAlign: "center", color: "#1890ff" }}>
-          {editId ? "Edit Class" : "Create Class"}
-        </Title>
-
-        {/* Form */}
-        <Form
-          form={form}
-          layout="vertical"
-          onFinish={handleSubmit}
-          style={{ marginBottom: 32 }}
+        <Card
+          bordered={false}
+          style={{
+            maxWidth: 1100,
+            margin: "0 auto",
+            borderRadius: 16,
+            boxShadow: "0 4px 16px rgba(0,0,0,0.1)",
+            padding: 24,
+          }}
         >
-          <Row gutter={16}>
-            <Col xs={24} sm={12}>
-              <Form.Item
-                name="name"
-                label="Class Name"
-                rules={[{ required: true, message: "Please enter class name" }]}
-              >
-                <Input placeholder="Enter class name" />
-              </Form.Item>
-            </Col>
+          <Title level={2} style={{ textAlign: "center", color: "#0d3b66" }}>
+            {editId ? "Edit Class" : "Create Class"}
+          </Title>
 
-            <Col xs={24} sm={12}>
-              <Form.Item
-                name="subject"
-                label="Subject"
-                rules={[{ required: true, message: "Please enter subject" }]}
-              >
-                <Input placeholder="Enter subject" />
-              </Form.Item>
-            </Col>
-
-            <Col xs={24} sm={12}>
-              <Form.Item
-                name="teacher"
-                label="Teacher"
-                rules={[{ required: true, message: "Please enter teacher name" }]}
-              >
-                <Input placeholder="Enter teacher name" />
-              </Form.Item>
-            </Col>
-
-            <Col xs={24} sm={12}>
-              <Form.Item
-                name="student"
-                label="Student"
-                rules={[{ required: true, message: "Please enter student name" }]}
-              >
-                <Input placeholder="Enter student name" />
-              </Form.Item>
-            </Col>
-          </Row>
-
-          <Form.Item>
-            <Space>
-              <Button type="primary" htmlType="submit" loading={saving}>
-                {editId ? "Update Class" : "Create Class"}
-              </Button>
-              {editId && (
-                <Button
-                  onClick={() => {
-                    setEditId(null);
-                    form.resetFields();
-                  }}
-                  disabled={saving}
+          {/* Form */}
+          <Form
+            form={form}
+            layout="vertical"
+            onFinish={handleSubmit}
+            style={{ marginBottom: 32 }}
+          >
+            <Row gutter={[16, 16]}>
+              <Col xs={24} sm={12}>
+                <Form.Item
+                  name="name"
+                  label="Class Name"
+                  rules={[{ required: true, message: "Please enter class name" }]}
                 >
-                  Cancel
-                </Button>
-              )}
-            </Space>
-          </Form.Item>
-        </Form>
+                  <Input placeholder="Enter class name" />
+                </Form.Item>
+              </Col>
 
-        {/* Table */}
-        {loading ? (
-          <Spin size="large" style={{ display: "block", margin: "40px auto" }} />
-        ) : (
-          <>
-            <Title level={4} style={{ marginBottom: 16, color: "#444" }}>
-              Class List
-            </Title>
-            <div style={{ width: "100%", overflowX: "auto" }}>
-              <Table
-                dataSource={users}
-                columns={columns}
-                rowKey="_id"
-                bordered
-                pagination={{ pageSize: 5, responsive: true }}
-                style={{ background: "#fff", borderRadius: 8, minWidth: 600 }}
-                scroll={{ x: "max-content" }}
-              />
-            </div>
-          </>
-        )}
-      </Card>
+              <Col xs={24} sm={12}>
+                <Form.Item
+                  name="subject"
+                  label="Subject"
+                  rules={[{ required: true, message: "Please enter subject" }]}
+                >
+                  <Input placeholder="Enter subject" />
+                </Form.Item>
+              </Col>
+
+              <Col xs={24} sm={12}>
+                <Form.Item
+                  name="teacher"
+                  label="Teacher"
+                  rules={[{ required: true, message: "Please enter teacher name" }]}
+                >
+                  <Input placeholder="Enter teacher name" />
+                </Form.Item>
+              </Col>
+
+              <Col xs={24} sm={12}>
+                <Form.Item
+                  name="student"
+                  label="Student"
+                  rules={[{ required: true, message: "Please enter student name" }]}
+                >
+                  <Input placeholder="Enter student name" />
+                </Form.Item>
+              </Col>
+            </Row>
+
+            <Form.Item>
+              <Space>
+                <Button
+                  style={{
+                    background: "#0d3b66",
+                    color: "white",
+                    transition: "all 0.3s",
+                  }}
+                  htmlType="submit"
+                  loading={saving}
+                  onMouseEnter={(e) =>
+                    (e.currentTarget.style.background = "#15508c")
+                  }
+                  onMouseLeave={(e) =>
+                    (e.currentTarget.style.background = "#0d3b66")
+                  }
+                >
+                  {editId ? "Update Class" : "Create Class"}
+                </Button>
+                {editId && (
+                  <Button
+                    onClick={() => {
+                      setEditId(null);
+                      form.resetFields();
+                    }}
+                    disabled={saving}
+                  >
+                    Cancel
+                  </Button>
+                )}
+              </Space>
+            </Form.Item>
+          </Form>
+
+          {/* Table */}
+          {loading ? (
+            <Spin size="large" style={{ display: "block", margin: "40px auto" }} />
+          ) : (
+            <>
+              <Title level={4} style={{ marginBottom: 16, color: "#444" }}>
+                Class List
+              </Title>
+              <div style={{ width: "100%", overflowX: "auto" }}>
+                <Table
+                  dataSource={users}
+                  columns={columns}
+                  rowKey="_id"
+                  bordered
+                  pagination={{ pageSize: 5, responsive: true }}
+                  scroll={{ x: "max-content" }}
+                  style={{
+                    borderRadius: 12,
+                    overflow: "hidden",
+                  }}
+                  components={{
+                    header: {
+                      cell: (props) => (
+                        <th
+                          {...props}
+                          style={{
+                            background: "#0d3b66",
+                            color: "white",
+                            textAlign: "center",
+                            fontWeight: "600",
+                          }}
+                        />
+                      ),
+                    },
+                  }}
+                />
+              </div>
+            </>
+          )}
+        </Card>
+      </motion.div>
     </div>
   );
 }
