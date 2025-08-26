@@ -30,6 +30,12 @@ export default function Login() {
       const res = await api.post("/auth/login", form);
       const newToken = res.data.token;
       const userRole = res?.data?.user?.role;
+      
+
+       const user = res.data.user; // full user object
+
+    
+    localStorage.setItem("user", JSON.stringify(user));
 
       login(newToken, userRole); // ✅ store token + role
     } catch (err) {

@@ -18,12 +18,15 @@ export default function Sidebar({ role, isOpen, setIsOpen }) {
        { label: "Manage Staff", path: "/staff" },
         { label: "Student Management", path: "/Students" },
          { label: "Classes Making", path: "/ClassCreate" },
-        { label: "Payement Gateway", path: "/razorpay" }
+       
+          { label: "Course Information", path: "/StudentDashboard" },
+           { label: "Payement Gateway", path: "/razorpay" },
     ],
     user: [
       
      { label: "Student Dashboard", path: "/BetaDashboard" },
        { label: "Course Information", path: "/StudentDashboard" }
+     
         // {label:"Student Info by image",path:"/StudentInfo"}
     ],
   };

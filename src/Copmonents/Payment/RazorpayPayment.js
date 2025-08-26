@@ -134,7 +134,7 @@ export default function RazorpayPayment() {
         }}
       >
         <Typography variant="h4" gutterBottom align="center" sx={{ fontWeight: "bold", color: "#0d3b66" }}>
-          Student Fee Payment
+          Only For Interviewers For checking payements 1 rupees transfer from your account to my account
         </Typography>
 
         <Grid container spacing={3} justifyContent="center" alignItems="center" sx={{ mb: 4 }}>

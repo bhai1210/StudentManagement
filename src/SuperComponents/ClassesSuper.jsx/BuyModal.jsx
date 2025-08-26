@@ -31,7 +31,7 @@ export default function BuyModal({ open, closeBuy, activeCourse, selectedSection
                 </Box>
               </CardContent>
               <CardActions sx={{ p: 2, pt: 0 }}>
-                <Button fullWidth size="large" variant="contained" onClick={handleCheckout} endIcon={<CheckCircleIcon />}>Buy Full Course</Button>
+                <Button fullWidth size="large" style={{background:"#0d3B66",color:"white"}} onClick={handleCheckout} endIcon={<CheckCircleIcon />}>Buy Full Course</Button>
               </CardActions>
             </Card>
 

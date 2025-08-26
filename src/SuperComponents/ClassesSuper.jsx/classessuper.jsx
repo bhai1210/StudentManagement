@@ -1,14 +1,22 @@
-import React, { useState, useMemo } from "react";
-import { Box ,Typography } from "@mui/material";
-import { motion } from "framer-motion";
 
+
+
+
+
+
+
+
+
+
+
+import React, { useState, useMemo } from "react";
+import { Box, Typography, Button } from "@mui/material";
+import { motion } from "framer-motion";
 import AppHeader from "./Header";
 import CourseFilter from "./CourseFilter";
 import CourseGrid from "./CourseGrid";
 import BuyModal from "./BuyModal";
-
-
-
+import api from "../../Services/api"; // ✅ your backend API
 
 const CATEGORIES = [
   { key: "std1to10", label: "Std 1–10" },
@@ -17,8 +25,6 @@ const CATEGORIES = [
   { key: "bcom", label: "B.Com" },
   { key: "mcom", label: "M.Com" },
 ];
-
-
 
 
 // FULL COURSE_CATALOG ARRAY
@@ -225,6 +231,7 @@ const COURSE_CATALOG = [
 ];
 
 
+// (your COURSE_CATALOG array as it is…)
 
 export default function ClassesSuper() {
   const [category, setCategory] = useState(CATEGORIES[0].key);
@@ -236,74 +243,161 @@ export default function ClassesSuper() {
 
   const filtered = useMemo(() => {
     const q = query.trim().toLowerCase();
-    return COURSE_CATALOG.filter(c => c.category === category && (!q || c.title.toLowerCase().includes(q) || c.description.toLowerCase().includes(q)));
+    return COURSE_CATALOG.filter(
+      (c) =>
+        c.category === category &&
+        (!q || c.title.toLowerCase().includes(q) || c.description.toLowerCase().includes(q))
+    );
   }, [category, query]);
 
-  const openBuy = course => { setActiveCourse(course); setSelectedSections({}); setOpen(true); };
-  const closeBuy = () => { setOpen(false); setActiveCourse(null); setSelectedSections({}); };
-  const toggleSection = key => setSelectedSections(prev => { const next = { ...prev }; if (next[key]) delete next[key]; else next[key] = true; return next; });
-  const sectionTotal = useMemo(() => activeCourse ? activeCourse.sections.filter(s => selectedSections[s.key]).reduce((sum, s) => sum + s.price, 0) : 0, [activeCourse, selectedSections]);
-  const handleCheckout = () => { setCartCount(c => c + 1); closeBuy(); };
-  const currency = n => new Intl.NumberFormat("en-IN", { style: "currency", currency: "INR", maximumFractionDigits: 0 }).format(n);
+  const openBuy = (course) => {
+    setActiveCourse(course);
+    setSelectedSections({});
+    setOpen(true);
+  };
+  const closeBuy = () => {
+    setOpen(false);
+    setActiveCourse(null);
+    setSelectedSections({});
+  };
+
+  const toggleSection = (key) =>
+    setSelectedSections((prev) => {
+      const next = { ...prev };
+      if (next[key]) delete next[key];
+      else next[key] = true;
+      return next;
+    });
+
+  const sectionTotal = useMemo(
+    () =>
+      activeCourse
+        ? activeCourse.sections
+            .filter((s) => selectedSections[s.key])
+            .reduce((sum, s) => sum + s.price, 0)
+        : 0,
+    [activeCourse, selectedSections]
+  );
+
+  // ✅ Razorpay Checkout
+  const handleCheckout = async () => {
+    try {
+      const totalAmount = sectionTotal || activeCourse.price;
+
+      // 1. create order on backend
+      const { data } = await api.post("/payments/create-order", { amount: totalAmount });
+      const { order } = data;
+
+      // 2. open Razorpay
+      const options = {
+        key: "rzp_live_R9XuwBFRtEokgL", // ✅ replace with your Razorpay key
+        amount: order.amount,
+        currency: order.currency,
+        name: "Student Courses",
+        description: activeCourse?.title,
+        order_id: order.id,
+        handler: async (response) => {
+          try {
+            // 3. verify payment
+            const verifyRes = await api.post("/payments/verify-payment", {
+              razorpay_order_id: response.razorpay_order_id,
+              razorpay_payment_id: response.razorpay_payment_id,
+              razorpay_signature: response.razorpay_signature,
+            });
+
+            if (verifyRes.data.success) {
+              setCartCount((c) => c + 1);
+              closeBuy();
+              alert("✅ Payment Successful!");
+            } else {
+              alert("❌ Payment Verification Failed");
+            }
+          } catch (err) {
+            console.error(err);
+            alert("❌ Payment Verification Error");
+          }
+        },
+        prefill: {
+          name: "John Doe",
+          email: "john@example.com",
+          contact: "9999999999",
+        },
+        theme: { color: "#0d3b66" },
+      };
+
+      const rzp = new window.Razorpay(options);
+      rzp.open();
+    } catch (err) {
+      console.error(err);
+      alert("❌ Payment Failed. Try again.");
+    }
+  };
+
+  const currency = (n) =>
+    new Intl.NumberFormat("en-IN", {
+      style: "currency",
+      currency: "INR",
+      maximumFractionDigits: 0,
+    }).format(n);
 
   return (
-  <Box
-  sx={{
-    fontFamily: "Poppins, sans-serif",
-    minHeight: "100vh",
-    background: "linear-gradient(120deg, #ffffff, #0d3b66,)",
+    <Box
+      sx={{
+        fontFamily: "Poppins, sans-serif",
+        minHeight: "100vh",
+        background: "linear-gradient(120deg, #ffffff, #0d3b66,)",
         boxShadow: "0px 4px 15px rgba(0,0,0,0.08)",
-    overflowX: "hidden",
-    position: "relative",
-  }}
->
-  {/* subtle rotating radial */}
-  <motion.div
-    animate={{ rotate: [0, 360] }}
-    transition={{ repeat: Infinity, duration: 120, ease: "linear" }}
-    style={{
-      position: "absolute",
-      width: 1200,
-      height: 1200,
-      borderRadius: "50%",
-      background:
-        "radial-gradient(circle at 50% 50%, rgba(255,255,255,0.05), transparent 70%)",
-      top: "-500px",
-      left: "-500px",
-      zIndex: 0,
-    }}
-  />
+        overflowX: "hidden",
+        position: "relative",
+      }}
+    >
+      <motion.div
+        animate={{ rotate: [0, 360] }}
+        transition={{ repeat: Infinity, duration: 120, ease: "linear" }}
+        style={{
+          position: "absolute",
+          width: 1200,
+          height: 1200,
+          borderRadius: "50%",
+          background:
+            "radial-gradient(circle at 50% 50%, rgba(255,255,255,0.05), transparent 70%)",
+          top: "-500px",
+          left: "-500px",
+          zIndex: 0,
+        }}
+      />
 
-  {/* <AppHeader cartCount={cartCount} /> */}
+      {/* <AppHeader cartCount={cartCount} /> */}
 
-  <Box sx={{ p: { xs: 2, md: 4 }, maxWidth: 1300, mx: "auto", position: "relative", zIndex: 5 }}>
-    <CourseFilter
-      CATEGORIES={CATEGORIES}
-      category={category}
-      setCategory={setCategory}
-      query={query}
-      setQuery={setQuery}
-      cartCount={cartCount}
-    />
+      <Box sx={{ p: { xs: 2, md: 4 }, maxWidth: 1300, mx: "auto", position: "relative", zIndex: 5 }}>
+        <CourseFilter
+          CATEGORIES={CATEGORIES}
+          category={category}
+          setCategory={setCategory}
+          query={query}
+          setQuery={setQuery}
+          cartCount={cartCount}
+        />
 
-    <CourseGrid filtered={filtered} openBuy={openBuy} currency={currency} />
+        <CourseGrid filtered={filtered} openBuy={openBuy} currency={currency} />
 
-    <BuyModal
-      open={open}
-      closeBuy={closeBuy}
-      activeCourse={activeCourse}
-      selectedSections={selectedSections}
-      toggleSection={toggleSection}
-      sectionTotal={sectionTotal}
-      handleCheckout={handleCheckout}
-      currency={currency}
-    />
+        <BuyModal
+          open={open}
+          closeBuy={closeBuy}
+          activeCourse={activeCourse}
+          selectedSections={selectedSections}
+          toggleSection={toggleSection}
+          sectionTotal={sectionTotal}
+          handleCheckout={handleCheckout} // ✅ Razorpay integrated
+          currency={currency}
+        />
 
-    <Box sx={{ textAlign: "center", mt: 4, color: "text.secondary" }}>
-      <Typography variant="caption">Need a custom package? Contact support.</Typography>
+        <Box sx={{ textAlign: "center", mt: 4, color: "text.secondary" }}>
+          <Typography variant="caption">Need a custom package? Contact support.</Typography>
+        </Box>
+      </Box>
     </Box>
-  </Box>
-</Box>
-
   );
 }
+
+
