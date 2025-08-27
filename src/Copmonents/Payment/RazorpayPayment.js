@@ -218,7 +218,7 @@ export default function RazorpayPayment() {
                         fontWeight: "bold",
                       }}
                     >
-                      {p.status.toUpperCase()}
+                      {p.status == "CREATED" ? "Failed" : p.status }
                     </TableCell>
                     <TableCell>{new Date(p.createdAt).toLocaleString()}</TableCell>
                   </TableRow>
