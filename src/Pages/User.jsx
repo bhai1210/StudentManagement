@@ -3,13 +3,14 @@ import {
   Table, TableBody, TableCell, TableContainer, TableHead, TableRow,
   Paper, Button, Dialog, DialogTitle, DialogContent, DialogActions,
   TextField, Select, MenuItem, IconButton, Box, Tooltip, Typography,
-  CircularProgress, TablePagination
+  CircularProgress, TablePagination, useMediaQuery, Stack
 } from "@mui/material";
 import { Delete, Add, Edit, Visibility, Search } from "@mui/icons-material";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { motion, AnimatePresence } from "framer-motion";
 import api from "../Services/api";
+import { useTheme } from "@mui/material/styles";
 
 export default function User() {
   const [users, setUsers] = useState([]);
@@ -28,6 +29,10 @@ export default function User() {
   const [search, setSearch] = useState("");
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(5);
+
+  // responsive check
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
 
   // Fetch users
   const fetchUsers = async () => {
@@ -137,19 +142,37 @@ export default function User() {
       <ToastContainer position="top-right" autoClose={2000} hideProgressBar />
 
       {/* Header */}
-      <Box display="flex" justifyContent="space-between" alignItems="center" mt={3} mb={2}>
-        <Typography variant="h5" fontWeight="bold" color="#0d3b66">
+      <Stack
+        direction={isMobile ? "column" : "row"}
+        spacing={2}
+        justifyContent="space-between"
+        alignItems={isMobile ? "stretch" : "center"}
+        mt={3}
+        mb={2}
+      >
+        <Typography
+          variant={isMobile ? "h6" : "h5"}
+          fontWeight="bold"
+          color="#0d3b66"
+          textAlign={isMobile ? "center" : "left"}
+        >
           User Management
         </Typography>
 
-        <Box display="flex" alignItems="center" gap={2}>
+        <Stack direction={isMobile ? "column" : "row"} spacing={2} alignItems="center">
           <TextField
             placeholder="Search by email..."
             size="small"
             value={search}
             onChange={(e) => setSearch(e.target.value)}
-            InputProps={{ startAdornment: <Search sx={{ mr: 1, color: "gray" }} /> }}
-            sx={{ background: "white", borderRadius: "8px" }}
+            InputProps={{
+              startAdornment: <Search sx={{ mr: 1, color: "gray" }} />,
+            }}
+            sx={{
+              background: "white",
+              borderRadius: "8px",
+              width: isMobile ? "100%" : "250px",
+            }}
           />
           <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
             <Button
@@ -162,19 +185,24 @@ export default function User() {
                 borderRadius: "10px",
                 textTransform: "none",
                 px: 3,
+                width: isMobile ? "100%" : "auto",
               }}
             >
               Add User
             </Button>
           </motion.div>
-        </Box>
-      </Box>
+        </Stack>
+      </Stack>
 
       {/* Users Table */}
       <TableContainer
         component={Paper}
         elevation={4}
-        sx={{ width: "100%", borderRadius: "12px", overflowX: "auto" }}
+        sx={{
+          width: "100%",
+          borderRadius: "12px",
+          overflowX: "auto",
+        }}
       >
         <Table sx={{ minWidth: 600 }}>
           <TableHead sx={{ backgroundColor: "#0d3b66" }}>
@@ -250,7 +278,13 @@ export default function User() {
       <AnimatePresence>
         {openAdd && (
           <motion.div initial="hidden" animate="visible" exit="hidden" variants={dialogVariants}>
-            <Dialog fullWidth maxWidth="sm" open={openAdd} onClose={() => setOpenAdd(false)}>
+            <Dialog
+              fullWidth
+              maxWidth="sm"
+              open={openAdd}
+              onClose={() => setOpenAdd(false)}
+              fullScreen={isMobile}
+            >
               <DialogTitle sx={{ fontWeight: "bold", color: "#0d3b66" }}>Add User</DialogTitle>
               <DialogContent>
                 <TextField
@@ -272,7 +306,6 @@ export default function User() {
                   value={formData.role}
                   onChange={(e) => setFormData({ ...formData, role: e.target.value })}
                   fullWidth
-                  margin="dense"
                   sx={{ mt: 2 }}
                 >
                   <MenuItem value="admin">Head Master</MenuItem>
@@ -301,7 +334,13 @@ export default function User() {
       <AnimatePresence>
         {openEdit && (
           <motion.div initial="hidden" animate="visible" exit="hidden" variants={dialogVariants}>
-            <Dialog fullWidth maxWidth="sm" open={openEdit} onClose={() => setOpenEdit(false)}>
+            <Dialog
+              fullWidth
+              maxWidth="sm"
+              open={openEdit}
+              onClose={() => setOpenEdit(false)}
+              fullScreen={isMobile}
+            >
               <DialogTitle sx={{ fontWeight: "bold", color: "#0d3b66" }}>Edit User</DialogTitle>
               <DialogContent>
                 <TextField
@@ -323,7 +362,6 @@ export default function User() {
                   value={formData.role}
                   onChange={(e) => setFormData({ ...formData, role: e.target.value })}
                   fullWidth
-                  margin="dense"
                   sx={{ mt: 2 }}
                 >
                   <MenuItem value="admin">Head Master</MenuItem>
@@ -352,7 +390,13 @@ export default function User() {
       <AnimatePresence>
         {openView && (
           <motion.div initial="hidden" animate="visible" exit="hidden" variants={dialogVariants}>
-            <Dialog fullWidth maxWidth="sm" open={openView} onClose={() => setOpenView(false)}>
+            <Dialog
+              fullWidth
+              maxWidth="sm"
+              open={openView}
+              onClose={() => setOpenView(false)}
+              fullScreen={isMobile}
+            >
               <DialogTitle sx={{ fontWeight: "bold", color: "#0d3b66" }}>User Details</DialogTitle>
               <DialogContent>
                 {selectedUser && (
