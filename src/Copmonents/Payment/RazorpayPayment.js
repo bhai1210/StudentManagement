@@ -204,7 +204,14 @@ export default function RazorpayPayment() {
                   <TableRow key={p._id}>
                     <TableCell sx={{ wordBreak: "break-word", maxWidth: 150 }}>{p.orderId}</TableCell>
                     <TableCell sx={{ wordBreak: "break-word", maxWidth: 150 }}>{p.paymentId || "-"}</TableCell>
-                    <TableCell>₹{p.amount}</TableCell>
+                   <TableCell>
+  {new Intl.NumberFormat("en-IN", {
+    style: "currency",
+    currency: "INR",
+    minimumFractionDigits: 2,
+  }).format(p.amount / 100)}
+</TableCell>
+
                     <TableCell
                       sx={{
                         color: p.status === "paid" ? "green" : p.status === "failed" ? "red" : "orange",
