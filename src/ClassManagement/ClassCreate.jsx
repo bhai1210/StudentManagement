@@ -113,11 +113,11 @@ const handleUpload = async ({ file, onSuccess, onError }) => {
       headers: { "Content-Type": "multipart/form-data" },
     });
 
-    const uploadedUrl = res?.data?.fileUrl; // ✅ backend returns fileUrl
+    const uploadedUrl = res?.data?.fileUrl; // ✅ backend returns this
 
     if (!uploadedUrl) throw new Error("Upload response missing fileUrl");
 
-    setImageUrl(uploadedUrl); // ✅ directly works in <img src={imageUrl} />
+    setImageUrl(uploadedUrl); // ✅ directly use blob URL
     message.success("Image uploaded successfully!");
 
     if (onSuccess) onSuccess("ok");
@@ -127,6 +127,7 @@ const handleUpload = async ({ file, onSuccess, onError }) => {
     if (onError) onError(err);
   }
 };
+
 
 
 
