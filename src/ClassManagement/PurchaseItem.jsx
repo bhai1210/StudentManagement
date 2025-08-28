@@ -100,7 +100,7 @@ function PurchaseItem() {
       const { order } = data;
 
       const options = {
-        key: "rzp_test_1234567890", // ⚠️ test key
+        key: "rzp_live_R9XuwBFRtEokgL", // ⚠️ test key
         amount: order.amount,
         currency: order.currency,
         name: "Shopping Checkout",
