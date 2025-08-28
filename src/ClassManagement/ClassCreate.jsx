@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from "react";
-import axios from "axios";
 import {
   Form,
   Input,
@@ -12,8 +11,11 @@ import {
   message,
   Row,
   Col,
+  Upload,
 } from "antd";
 import { motion } from "framer-motion";
+import { UploadOutlined } from "@ant-design/icons";
+import api from "../Services/api";
 
 const { Title } = Typography;
 
@@ -23,14 +25,13 @@ function ClassCreate() {
   const [saving, setSaving] = useState(false);
   const [editId, setEditId] = useState(null);
   const [form] = Form.useForm();
+  const [imageUrl, setImageUrl] = useState(null); // preview + backend URL
 
   // Fetch all classes
   const fetchUsers = async () => {
     try {
       setLoading(true);
-      const response = await axios.get(
-        "https://student-management-backend-node-rd8.vercel.app/class"
-      );
+      const response = await api.get("/class");
       if (Array.isArray(response.data?.data)) {
         setUsers(response.data.data);
       } else {
@@ -48,27 +49,31 @@ function ClassCreate() {
     fetchUsers();
   }, []);
 
-  // Create or update class
+  // Submit handler (Create / Update)
   const handleSubmit = async (values) => {
     try {
       setSaving(true);
+
+      const payload = { ...values, students: [values.student] };
+
       if (editId) {
-        await axios.put(
-          `https://student-management-backend-node-rd8.vercel.app/class/${editId}`,
-          { ...values, students: [values.student] }
-        );
+        // Edit mode
+        payload.image = imageUrl || users.find((u) => u._id === editId)?.image || null;
+        await api.put(`/class/${editId}`, payload);
         message.success("Class updated successfully!");
         setEditId(null);
       } else {
-        await axios.post(
-          "https://student-management-backend-node-rd8.vercel.app/class",
-          { ...values, students: [values.student] }
-        );
+        // Create mode
+        payload.image = imageUrl || null;
+        await api.post("/class", payload);
         message.success("Class created successfully!");
       }
+
       await fetchUsers();
       form.resetFields();
-    } catch {
+      setImageUrl(null);
+    } catch (err) {
+      console.error(err);
       message.error("Error saving class!");
     } finally {
       setSaving(false);
@@ -76,7 +81,7 @@ function ClassCreate() {
   };
 
   // Edit handler
-  const onedit = (user) => {
+  const onEdit = (user) => {
     setEditId(user._id);
     form.setFieldsValue({
       name: user.name || "",
@@ -84,20 +89,48 @@ function ClassCreate() {
       teacher: user.teacher || "",
       student: user.students?.[0] || "",
     });
+    setImageUrl(user.image || null); // show old image
   };
 
   // Delete handler
-  const deleteuser = async (id) => {
+  const deleteUser = async (id) => {
     try {
-      await axios.delete(
-        `https://student-management-backend-node-rd8.vercel.app/class/${id}`
-      );
+      await api.delete(`/class/${id}`);
       message.success("Class deleted successfully!");
       await fetchUsers();
-    } catch {
+    } catch (err) {
+      console.error(err);
       message.error("Failed to delete class!");
     }
   };
+
+const handleUpload = async ({ file, onSuccess, onError }) => {
+  try {
+    const formData = new FormData();
+    formData.append("file", file);
+
+    const res = await api.post("/uploads", formData, {
+      headers: { "Content-Type": "multipart/form-data" },
+    });
+
+    const uploadedUrl = res?.data?.fileUrl; // ✅ backend returns fileUrl
+
+    if (!uploadedUrl) throw new Error("Upload response missing fileUrl");
+
+    setImageUrl(uploadedUrl); // ✅ directly works in <img src={imageUrl} />
+    message.success("Image uploaded successfully!");
+
+    if (onSuccess) onSuccess("ok");
+  } catch (err) {
+    console.error(err);
+    message.error("Image upload failed!");
+    if (onError) onError(err);
+  }
+};
+
+
+
+
 
   // Table columns
   const columns = [
@@ -111,6 +144,26 @@ function ClassCreate() {
       render: (students) => (students || []).join(", "),
     },
     {
+      title: "Image",
+      dataIndex: "image",
+      key: "image",
+      render: (image) =>
+        image ? (
+          <img
+            src={image}
+            alt="class"
+            style={{
+              width: 60,
+              height: 60,
+              objectFit: "cover",
+              borderRadius: 8,
+            }}
+          />
+        ) : (
+          "No Image"
+        ),
+    },
+    {
       title: "Actions",
       key: "actions",
       render: (_, record) => (
@@ -119,11 +172,11 @@ function ClassCreate() {
             type="primary"
             size="small"
             style={{ background: "#0d3b66", border: "none" }}
-            onClick={() => onedit(record)}
+            onClick={() => onEdit(record)}
           >
             Edit
           </Button>
-          <Button danger size="small" onClick={() => deleteuser(record._id)}>
+          <Button danger size="small" onClick={() => deleteUser(record._id)}>
             Delete
           </Button>
         </Space>
@@ -199,6 +252,37 @@ function ClassCreate() {
                   <Input placeholder="Enter student name" />
                 </Form.Item>
               </Col>
+
+              {/* Upload + Preview */}
+              <Col xs={24} sm={12}>
+                <Form.Item label="Upload Image">
+                  <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
+                    <Upload
+                      customRequest={handleUpload}
+                      showUploadList={false}
+                      accept="image/*"
+                    >
+                      <Button icon={<UploadOutlined />}>
+                        {editId ? "Change Image" : "Click to Upload"}
+                      </Button>
+                    </Upload>
+
+                    {imageUrl && (
+                      <img
+                        src={imageUrl}
+                        alt="preview"
+                        style={{
+                          width: 100,
+                          height: 100,
+                          objectFit: "cover",
+                          borderRadius: 8,
+                          border: "1px solid #ddd",
+                        }}
+                      />
+                    )}
+                  </div>
+                </Form.Item>
+              </Col>
             </Row>
 
             <Form.Item>
@@ -207,16 +291,9 @@ function ClassCreate() {
                   style={{
                     background: "#0d3b66",
                     color: "white",
-                    transition: "all 0.3s",
                   }}
                   htmlType="submit"
                   loading={saving}
-                  onMouseEnter={(e) =>
-                    (e.currentTarget.style.background = "#15508c")
-                  }
-                  onMouseLeave={(e) =>
-                    (e.currentTarget.style.background = "#0d3b66")
-                  }
                 >
                   {editId ? "Update Class" : "Create Class"}
                 </Button>
@@ -225,6 +302,7 @@ function ClassCreate() {
                     onClick={() => {
                       setEditId(null);
                       form.resetFields();
+                      setImageUrl(null);
                     }}
                     disabled={saving}
                   >
