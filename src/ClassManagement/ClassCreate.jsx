@@ -27,7 +27,7 @@ function ClassCreate() {
   const [form] = Form.useForm();
   const [imageUrl, setImageUrl] = useState(null);
 
-  // Fetch all classes
+  // ✅ Fetch all classes
   const fetchClasses = async () => {
     try {
       setLoading(true);
@@ -38,6 +38,7 @@ function ClassCreate() {
         setClasses([]);
       }
     } catch (error) {
+      console.error(error);
       message.error("Failed to fetch classes!");
       setClasses([]);
     } finally {
@@ -49,14 +50,14 @@ function ClassCreate() {
     fetchClasses();
   }, []);
 
-  // Submit handler (Create / Update)
+  // ✅ Submit handler (Create / Update)
   const handleSubmit = async (values) => {
     try {
       setSaving(true);
 
       const payload = {
         ...values,
-        stockcount: [values.stockcount], // backend expects array
+        stockcount: values.stockcount ? [values.stockcount] : [],
         image: imageUrl || null,
       };
 
@@ -80,7 +81,7 @@ function ClassCreate() {
     }
   };
 
-  // Edit handler
+  // ✅ Edit handler
   const onEdit = (cls) => {
     setEditId(cls._id);
     form.setFieldsValue({
@@ -92,7 +93,7 @@ function ClassCreate() {
     setImageUrl(cls.image || null);
   };
 
-  // Delete handler
+  // ✅ Delete handler
   const deleteClass = async (id) => {
     try {
       await api.delete(`/class/${id}`);
@@ -104,7 +105,7 @@ function ClassCreate() {
     }
   };
 
-  // File Upload
+  // ✅ File Upload to backend (Vercel Blob)
   const handleUpload = async ({ file, onSuccess, onError }) => {
     try {
       const formData = new FormData();
@@ -127,7 +128,7 @@ function ClassCreate() {
     }
   };
 
-  // Table columns
+  // ✅ Table columns
   const columns = [
     { title: "Name", dataIndex: "name", key: "name" },
     { title: "Price", dataIndex: "price", key: "price" },
@@ -197,10 +198,10 @@ function ClassCreate() {
           }}
         >
           <Title level={2} style={{ textAlign: "center", color: "#0d3b66" }}>
-            {editId ? "Edit Product" : "Create Product"}
+            {editId ? "Edit Class" : "Create Class"}
           </Title>
 
-          {/* Form */}
+          {/* ✅ Form */}
           <Form
             form={form}
             layout="vertical"
@@ -211,17 +212,17 @@ function ClassCreate() {
               <Col xs={24} sm={12}>
                 <Form.Item
                   name="name"
-                  label="Product Name"
-                  rules={[{ required: true, message: "Please enter product name" }]}
+                  label="Class Name"
+                  rules={[{ required: true, message: "Please enter class name" }]}
                 >
-                  <Input placeholder="Enter product name" />
+                  <Input placeholder="Enter class name" />
                 </Form.Item>
               </Col>
 
               <Col xs={24} sm={12}>
                 <Form.Item
                   name="price"
-                  label="Product Price"
+                  label="Class Price"
                   rules={[{ required: true, message: "Please enter price" }]}
                 >
                   <Input placeholder="Enter price" />
@@ -231,7 +232,7 @@ function ClassCreate() {
               <Col xs={24} sm={12}>
                 <Form.Item
                   name="description"
-                  label="Product Description"
+                  label="Class Description"
                   rules={[{ required: true, message: "Please enter description" }]}
                 >
                   <Input placeholder="Enter description" />
@@ -241,14 +242,14 @@ function ClassCreate() {
               <Col xs={24} sm={12}>
                 <Form.Item
                   name="stockcount"
-                  label="Stock of Product"
+                  label="Stock Count"
                   rules={[{ required: true, message: "Please enter stock count" }]}
                 >
                   <Input placeholder="Enter stock count" />
                 </Form.Item>
               </Col>
 
-              {/* Upload + Preview */}
+              {/* ✅ Upload + Preview */}
               <Col xs={24} sm={12}>
                 <Form.Item label="Upload Image">
                   <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
@@ -290,7 +291,7 @@ function ClassCreate() {
                   htmlType="submit"
                   loading={saving}
                 >
-                  {editId ? "Update Product" : "Create Product"}
+                  {editId ? "Update Class" : "Create Class"}
                 </Button>
                 {editId && (
                   <Button
@@ -308,13 +309,13 @@ function ClassCreate() {
             </Form.Item>
           </Form>
 
-          {/* Table */}
+          {/* ✅ Table */}
           {loading ? (
             <Spin size="large" style={{ display: "block", margin: "40px auto" }} />
           ) : (
             <>
               <Title level={4} style={{ marginBottom: 16, color: "#444" }}>
-                Product List
+                Class List
               </Title>
               <div style={{ width: "100%", overflowX: "auto" }}>
                 <Table
