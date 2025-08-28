@@ -1,13 +1,41 @@
 import React, { useEffect, useState } from "react";
-import { Card, Button, Row, Col, Spin, message, Typography, Modal } from "antd";
+import {
+  Card,
+  Button,
+  Row,
+  Col,
+  Spin,
+  message,
+  Typography,
+  Modal,
+  Input,
+  Select,
+  Slider,
+  Badge,
+  Drawer,
+  List,
+} from "antd";
 import { motion } from "framer-motion";
 import api from "../Services/api";
 
 const { Title, Text } = Typography;
+const { Search } = Input;
+const { Option } = Select;
 
 function PurchaseItem() {
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(false);
+
+  // ✅ Search & Filter states
+  const [searchQuery, setSearchQuery] = useState("");
+  const [category, setCategory] = useState(null);
+  const [priceRange, setPriceRange] = useState([0, 5000]);
+  const [rating, setRating] = useState(null);
+  const [sort, setSort] = useState("price:asc");
+
+  // ✅ Cart & Checkout states
+  const [cart, setCart] = useState([]);
+  const [cartVisible, setCartVisible] = useState(false);
 
   // ✅ Payment states
   const [successDialog, setSuccessDialog] = useState(false);
@@ -18,7 +46,17 @@ function PurchaseItem() {
   const fetchProducts = async () => {
     try {
       setLoading(true);
-      const res = await api.get("/class");
+      const res = await api.get("/class", {
+        params: {
+          search: searchQuery,
+          category,
+          minPrice: priceRange[0],
+          maxPrice: priceRange[1],
+          rating,
+          sort,
+        },
+      });
+
       if (Array.isArray(res.data?.data)) {
         setProducts(res.data.data);
       } else {
@@ -34,22 +72,39 @@ function PurchaseItem() {
 
   useEffect(() => {
     fetchProducts();
-  }, []);
+  }, [searchQuery, category, priceRange, rating, sort]);
 
-  // ✅ Payment Handler
-  const handlePayment = async (product) => {
+  // ✅ Add to Cart
+  const addToCart = (product) => {
+    setCart((prev) => {
+      const exists = prev.find((p) => p._id === product._id);
+      if (exists) {
+        return prev.map((p) =>
+          p._id === product._id ? { ...p, qty: p.qty + 1 } : p
+        );
+      }
+      return [...prev, { ...product, qty: 1 }];
+    });
+    message.success(`${product.name} added to cart`);
+  };
+
+  // ✅ Checkout (Cart Payment)
+  const handleCheckout = async () => {
     try {
+      const totalAmount = cart.reduce((sum, item) => sum + item.price * item.qty, 0);
+
       const { data } = await api.post("/payments/create-order", {
-        amount: product.price,
+        amount: totalAmount,
       });
+
       const { order } = data;
 
       const options = {
-        key: "rzp_live_R9XuwBFRtEokgL", // ⚠️ replace with test key in dev
+        key: "rzp_test_1234567890", // ⚠️ test key
         amount: order.amount,
         currency: order.currency,
-        name: "Product Purchase",
-        description: `Payment for ${product.name}`,
+        name: "Shopping Checkout",
+        description: `Payment for cart items`,
         order_id: order.id,
         handler: async (response) => {
           try {
@@ -63,8 +118,10 @@ function PurchaseItem() {
               setPaymentDetails({
                 orderId: response.razorpay_order_id,
                 paymentId: response.razorpay_payment_id,
-                amount: product.price,
+                amount: totalAmount,
               });
+              setCart([]);
+              setCartVisible(false);
               setSuccessDialog(true);
             } else {
               setFailureDialog(true);
@@ -80,11 +137,6 @@ function PurchaseItem() {
           contact: "9999999999",
         },
         theme: { color: "#0d3b66" },
-        modal: {
-          ondismiss: () => {
-            setFailureDialog(true);
-          },
-        },
       };
 
       const rzp = new window.Razorpay(options);
@@ -97,23 +149,57 @@ function PurchaseItem() {
 
   return (
     <div style={{ minHeight: "100vh", background: "#f5f7fa", padding: "40px" }}>
-      <motion.div
-        initial={{ opacity: 0, y: 40 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.8, ease: "easeOut" }}
-      >
-        <Title
-          level={2}
-          style={{
-            textAlign: "center",
-            marginBottom: "50px",
-            color: "#0d3b66",
-            fontWeight: "bold",
-          }}
-        >
-          🛍️ Our Exclusive Products
-        </Title>
-      </motion.div>
+      {/* 🔎 Filters */}
+      <Row gutter={16} style={{ marginBottom: 20 }}>
+        <Col xs={24} sm={12} md={6}>
+          <Search
+            placeholder="Search products..."
+            allowClear
+            onSearch={(val) => setSearchQuery(val)}
+          />
+        </Col>
+        <Col xs={24} sm={12} md={6}>
+          <Select
+            placeholder="Filter by Category"
+            allowClear
+            style={{ width: "100%" }}
+            onChange={(val) => setCategory(val)}
+          >
+            <Option value="electronics">Electronics</Option>
+            <Option value="fashion">Fashion</Option>
+            <Option value="books">Books</Option>
+          </Select>
+        </Col>
+        <Col xs={24} sm={12} md={6}>
+          <Slider
+            range
+            min={0}
+            max={10000}
+            defaultValue={priceRange}
+            onAfterChange={(val) => setPriceRange(val)}
+          />
+        </Col>
+        <Col xs={24} sm={12} md={6}>
+          <Select
+            defaultValue="price:asc"
+            onChange={(val) => setSort(val)}
+            style={{ width: "100%" }}
+          >
+            <Option value="price:asc">Price: Low to High</Option>
+            <Option value="price:desc">Price: High to Low</Option>
+            <Option value="rating:desc">Rating: High to Low</Option>
+          </Select>
+        </Col>
+      </Row>
+
+      {/* 🛒 Cart Button */}
+      <div style={{ textAlign: "right", marginBottom: 20 }}>
+        <Badge count={cart.length} showZero>
+          <Button type="primary" onClick={() => setCartVisible(true)}>
+            🛒 Cart
+          </Button>
+        </Badge>
+      </div>
 
       {loading ? (
         <Spin size="large" style={{ display: "block", margin: "40px auto" }} />
@@ -169,17 +255,9 @@ function PurchaseItem() {
                     <Button
                       type="primary"
                       block
-                      style={{
-                        marginTop: 12,
-                        background: "#0d3b66",
-                        border: "none",
-                        borderRadius: 10,
-                        fontWeight: "600",
-                        padding: "10px 0",
-                      }}
-                      onClick={() => handlePayment(item)}
+                      onClick={() => addToCart(item)}
                     >
-                      🛒 Buy Now
+                      ➕ Add to Cart
                     </Button>
                   </motion.div>
                 </Card>
@@ -188,6 +266,29 @@ function PurchaseItem() {
           ))}
         </Row>
       )}
+
+      {/* 🛒 Cart Drawer */}
+      <Drawer
+        title="Your Shopping Cart"
+        open={cartVisible}
+        onClose={() => setCartVisible(false)}
+        width={400}
+      >
+        <List
+          dataSource={cart}
+          renderItem={(item) => (
+            <List.Item>
+              <Text strong>{item.name}</Text> × {item.qty} = ₹
+              {item.price * item.qty}
+            </List.Item>
+          )}
+        />
+        <div style={{ marginTop: 20, textAlign: "right" }}>
+          <Button type="primary" onClick={handleCheckout} disabled={!cart.length}>
+            Checkout
+          </Button>
+        </div>
+      </Drawer>
 
       {/* ✅ Success Modal */}
       <Modal
