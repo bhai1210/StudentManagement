@@ -36,7 +36,7 @@ function PurchaseItem() {
   // ✅ Search & Filter states
   const [searchQuery, setSearchQuery] = useState("");
   const [category, setCategory] = useState(null);
-  const [priceRange, setPriceRange] = useState([0, 5000]);
+  const [priceRange, setPriceRange] = useState([0, 50]);
   const [rating, setRating] = useState(null);
   const [sort, setSort] = useState("price:asc");
 
