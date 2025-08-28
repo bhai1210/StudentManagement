@@ -113,20 +113,21 @@ const handleUpload = async ({ file, onSuccess, onError }) => {
       headers: { "Content-Type": "multipart/form-data" },
     });
 
-    const uploadedUrl = res?.data?.fileUrl; // ✅ backend returns this
+    const uploadedUrl = res?.data?.fileUrl; // ✅ backend gives this
 
     if (!uploadedUrl) throw new Error("Upload response missing fileUrl");
 
-    setImageUrl(uploadedUrl); // ✅ directly use blob URL
+    setImageUrl(uploadedUrl); // ✅ show preview
     message.success("Image uploaded successfully!");
 
     if (onSuccess) onSuccess("ok");
   } catch (err) {
-    console.error(err);
+    console.error("Upload error:", err);
     message.error("Image upload failed!");
     if (onError) onError(err);
   }
 };
+
 
 
 
@@ -258,29 +259,31 @@ const handleUpload = async ({ file, onSuccess, onError }) => {
               <Col xs={24} sm={12}>
                 <Form.Item label="Upload Image">
                   <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
-                    <Upload
-                      customRequest={handleUpload}
-                      showUploadList={false}
-                      accept="image/*"
-                    >
-                      <Button icon={<UploadOutlined />}>
-                        {editId ? "Change Image" : "Click to Upload"}
-                      </Button>
-                    </Upload>
+                  <Upload
+  customRequest={handleUpload}
+  showUploadList={false}
+  accept="image/*"
+>
+  <Button icon={<UploadOutlined />}>
+    {editId ? "Change Image" : "Click to Upload"}
+  </Button>
+</Upload>
 
-                    {imageUrl && (
-                      <img
-                        src={imageUrl}
-                        alt="preview"
-                        style={{
-                          width: 100,
-                          height: 100,
-                          objectFit: "cover",
-                          borderRadius: 8,
-                          border: "1px solid #ddd",
-                        }}
-                      />
-                    )}
+
+             {imageUrl && (
+  <img
+    src={imageUrl}
+    alt="preview"
+    style={{
+      width: 100,
+      height: 100,
+      objectFit: "cover",
+      borderRadius: 8,
+      border: "1px solid #ddd",
+    }}
+  />
+)}
+
                   </div>
                 </Form.Item>
               </Col>
