@@ -14,8 +14,15 @@ import {
   Badge,
   Drawer,
   List,
+  Space,
 } from "antd";
 import { motion } from "framer-motion";
+import {
+  PlusOutlined,
+  MinusOutlined,
+  DeleteOutlined,
+  ShoppingCartOutlined,
+} from "@ant-design/icons";
 import api from "../Services/api";
 
 const { Title, Text } = Typography;
@@ -88,10 +95,37 @@ function PurchaseItem() {
     message.success(`${product.name} added to cart`);
   };
 
+  // ➖ Remove from Cart
+  const removeFromCart = (id) => {
+    setCart((prev) => prev.filter((p) => p._id !== id));
+    message.info("Item removed from cart");
+  };
+
+  // 🔼 Increment Qty
+  const incrementQty = (id) => {
+    setCart((prev) =>
+      prev.map((p) => (p._id === id ? { ...p, qty: p.qty + 1 } : p))
+    );
+  };
+
+  // 🔽 Decrement Qty
+  const decrementQty = (id) => {
+    setCart((prev) =>
+      prev
+        .map((p) =>
+          p._id === id ? { ...p, qty: Math.max(1, p.qty - 1) } : p
+        )
+        .filter((p) => p.qty > 0)
+    );
+  };
+
   // ✅ Checkout (Cart Payment)
   const handleCheckout = async () => {
     try {
-      const totalAmount = cart.reduce((sum, item) => sum + item.price * item.qty, 0);
+      const totalAmount = cart.reduce(
+        (sum, item) => sum + item.price * item.qty,
+        0
+      );
 
       const { data } = await api.post("/payments/create-order", {
         amount: totalAmount,
@@ -196,7 +230,7 @@ function PurchaseItem() {
       <div style={{ textAlign: "right", marginBottom: 20 }}>
         <Badge count={cart.length} showZero>
           <Button type="primary" onClick={() => setCartVisible(true)}>
-            🛒 Cart
+            <ShoppingCartOutlined /> Cart
           </Button>
         </Badge>
       </div>
@@ -277,9 +311,33 @@ function PurchaseItem() {
         <List
           dataSource={cart}
           renderItem={(item) => (
-            <List.Item>
-              <Text strong>{item.name}</Text> × {item.qty} = ₹
-              {item.price * item.qty}
+            <List.Item
+              actions={[
+                <Button
+                  size="small"
+                  icon={<MinusOutlined />}
+                  onClick={() => decrementQty(item._id)}
+                />,
+                <Button
+                  size="small"
+                  icon={<PlusOutlined />}
+                  onClick={() => incrementQty(item._id)}
+                />,
+                <Button
+                  size="small"
+                  danger
+                  icon={<DeleteOutlined />}
+                  onClick={() => removeFromCart(item._id)}
+                />,
+              ]}
+            >
+              <Space direction="vertical">
+                <Text strong>{item.name}</Text>
+                <Text>
+                  Qty: {item.qty} × ₹{item.price} ={" "}
+                  <b>₹{item.price * item.qty}</b>
+                </Text>
+              </Space>
             </List.Item>
           )}
         />
