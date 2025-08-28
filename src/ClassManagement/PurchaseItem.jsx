@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Card, Button, Row, Col, Spin, message, Typography, Paper, Table, TableBody, TableCell, TableHead, TableRow, Dialog, DialogTitle, DialogContent, DialogActions } from "antd";
+import { Card, Button, Row, Col, Spin, message, Typography, Modal } from "antd";
 import { motion } from "framer-motion";
 import api from "../Services/api";
 
@@ -10,7 +10,6 @@ function PurchaseItem() {
   const [loading, setLoading] = useState(false);
 
   // ✅ Payment states
-  const [payments, setPayments] = useState([]);
   const [successDialog, setSuccessDialog] = useState(false);
   const [failureDialog, setFailureDialog] = useState(false);
   const [paymentDetails, setPaymentDetails] = useState(null);
@@ -33,25 +32,16 @@ function PurchaseItem() {
     }
   };
 
-  // ✅ Fetch Payment History
-  const fetchPayments = async () => {
-    try {
-      const { data } = await api.get("/payments/history");
-      setPayments(data.payments || []);
-    } catch (err) {
-      console.error(err);
-    }
-  };
-
   useEffect(() => {
     fetchProducts();
-    fetchPayments();
   }, []);
 
   // ✅ Payment Handler
   const handlePayment = async (product) => {
     try {
-      const { data } = await api.post("/payments/create-order", { amount: product.price });
+      const { data } = await api.post("/payments/create-order", {
+        amount: product.price,
+      });
       const { order } = data;
 
       const options = {
@@ -76,7 +66,6 @@ function PurchaseItem() {
                 amount: product.price,
               });
               setSuccessDialog(true);
-              fetchPayments();
             } else {
               setFailureDialog(true);
             }
@@ -85,7 +74,11 @@ function PurchaseItem() {
             setFailureDialog(true);
           }
         },
-        prefill: { name: "John Doe", email: "john@example.com", contact: "9999999999" },
+        prefill: {
+          name: "John Doe",
+          email: "john@example.com",
+          contact: "9999999999",
+        },
         theme: { color: "#0d3b66" },
         modal: {
           ondismiss: () => {
@@ -109,7 +102,15 @@ function PurchaseItem() {
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.8, ease: "easeOut" }}
       >
-        <Title level={2} style={{ textAlign: "center", marginBottom: "50px", color: "#0d3b66", fontWeight: "bold" }}>
+        <Title
+          level={2}
+          style={{
+            textAlign: "center",
+            marginBottom: "50px",
+            color: "#0d3b66",
+            fontWeight: "bold",
+          }}
+        >
           🛍️ Our Exclusive Products
         </Title>
       </motion.div>
@@ -147,13 +148,22 @@ function PurchaseItem() {
                     />
                   }
                 >
-                  <Title level={4} style={{ marginBottom: 8, color: "#0d3b66", fontWeight: 600 }}>
+                  <Title
+                    level={4}
+                    style={{
+                      marginBottom: 8,
+                      color: "#0d3b66",
+                      fontWeight: 600,
+                    }}
+                  >
                     {item.name}
                   </Title>
                   <Text strong style={{ fontSize: 18, color: "#ff5722" }}>
                     ₹ {item.price}
                   </Text>
-                  <p style={{ margin: "10px 0", color: "#555" }}>{item.description}</p>
+                  <p style={{ margin: "10px 0", color: "#555" }}>
+                    {item.description}
+                  </p>
 
                   <motion.div whileHover={{ scale: 1.05 }}>
                     <Button
@@ -179,74 +189,45 @@ function PurchaseItem() {
         </Row>
       )}
 
-      {/* ✅ Payment History */}
-      <div style={{ marginTop: 60 }}>
-        <Title level={3}>Payment History</Title>
-        <Paper style={{ width: "100%", overflowX: "auto", borderRadius: 15, padding: 20 }}>
-          <Table>
-            <TableHead style={{ background: "#0d3b66" }}>
-              <TableRow>
-                <TableCell style={{ color: "white", fontWeight: "bold" }}>Order ID</TableCell>
-                <TableCell style={{ color: "white", fontWeight: "bold" }}>Payment ID</TableCell>
-                <TableCell style={{ color: "white", fontWeight: "bold" }}>Amount</TableCell>
-                <TableCell style={{ color: "white", fontWeight: "bold" }}>Status</TableCell>
-                <TableCell style={{ color: "white", fontWeight: "bold" }}>Date</TableCell>
-              </TableRow>
-            </TableHead>
-            <TableBody>
-              {payments.length > 0 ? (
-                payments.map((p) => (
-                  <TableRow key={p._id}>
-                    <TableCell>{p.orderId}</TableCell>
-                    <TableCell>{p.paymentId || "-"}</TableCell>
-                    <TableCell>
-                      {new Intl.NumberFormat("en-IN", {
-                        style: "currency",
-                        currency: "INR",
-                        minimumFractionDigits: 2,
-                      }).format(p.amount / 100)}
-                    </TableCell>
-                    <TableCell style={{ color: p.status === "paid" ? "green" : p.status === "failed" ? "red" : "orange" }}>
-                      {p.status === "CREATED" ? "Failed" : p.status}
-                    </TableCell>
-                    <TableCell>{new Date(p.createdAt).toLocaleString()}</TableCell>
-                  </TableRow>
-                ))
-              ) : (
-                <TableRow>
-                  <TableCell colSpan={5} align="center">
-                    No payment history found
-                  </TableCell>
-                </TableRow>
-              )}
-            </TableBody>
-          </Table>
-        </Paper>
-      </div>
+      {/* ✅ Success Modal */}
+      <Modal
+        open={successDialog}
+        onCancel={() => setSuccessDialog(false)}
+        footer={[
+          <Button key="ok" type="primary" onClick={() => setSuccessDialog(false)}>
+            OK
+          </Button>,
+        ]}
+      >
+        <Title level={4} style={{ color: "green" }}>
+          Payment Successful 🎉
+        </Title>
+        <p>
+          <b>Order ID:</b> {paymentDetails?.orderId}
+        </p>
+        <p>
+          <b>Payment ID:</b> {paymentDetails?.paymentId}
+        </p>
+        <p>
+          <b>Amount:</b> ₹{paymentDetails?.amount}
+        </p>
+      </Modal>
 
-      {/* ✅ Success Dialog */}
-      <Dialog open={successDialog} onClose={() => setSuccessDialog(false)}>
-        <DialogTitle style={{ color: "green", fontWeight: "bold" }}>Payment Successful 🎉</DialogTitle>
-        <DialogContent>
-          <p><b>Order ID:</b> {paymentDetails?.orderId}</p>
-          <p><b>Payment ID:</b> {paymentDetails?.paymentId}</p>
-          <p><b>Amount:</b> ₹{paymentDetails?.amount}</p>
-        </DialogContent>
-        <DialogActions>
-          <Button onClick={() => setSuccessDialog(false)} type="primary">OK</Button>
-        </DialogActions>
-      </Dialog>
-
-      {/* ❌ Failure Dialog */}
-      <Dialog open={failureDialog} onClose={() => setFailureDialog(false)}>
-        <DialogTitle style={{ color: "red", fontWeight: "bold" }}>Payment Failed ❌</DialogTitle>
-        <DialogContent>
-          <p>Something went wrong or you cancelled the payment.</p>
-        </DialogContent>
-        <DialogActions>
-          <Button onClick={() => setFailureDialog(false)} danger type="primary">Close</Button>
-        </DialogActions>
-      </Dialog>
+      {/* ❌ Failure Modal */}
+      <Modal
+        open={failureDialog}
+        onCancel={() => setFailureDialog(false)}
+        footer={[
+          <Button key="close" danger onClick={() => setFailureDialog(false)}>
+            Close
+          </Button>,
+        ]}
+      >
+        <Title level={4} style={{ color: "red" }}>
+          Payment Failed ❌
+        </Title>
+        <p>Something went wrong or you cancelled the payment.</p>
+      </Modal>
     </div>
   );
 }
