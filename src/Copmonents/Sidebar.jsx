@@ -15,18 +15,20 @@ export default function Sidebar({ role, isOpen, setIsOpen }) {
   const menuItems = {
     admin: [
       { label: "Dashboard", path: "/User" },
-       { label: "Manage Staff", path: "/staff" },
-        { label: "Student Management", path: "/Students" },
+       { label: "Admin Panel ", path: "/staff" },
+        // { label: "Student Management", path: "/Students" },
          { label: "Add Products", path: "/ClassCreate" },
        
-          { label: "Course Information", path: "/StudentDashboard" },
-           { label: "Payement Gateway", path: "/razorpay" },
+          // { label: "Course Information", path: "/StudentDashboard" },
+          
              { label: "Purchase Items", path: "/purchase" },
+              { label: "Payement Gateway", path: "/razorpay" },
     ],
     user: [
       
      { label: "Student Dashboard", path: "/BetaDashboard" },
-       { label: "Course Information", path: "/StudentDashboard" }
+      //  { label: "Course Information", path: "/StudentDashboard" },
+                  { label: "Purchase Items", path: "/purchase" },
      
         // {label:"Student Info by image",path:"/StudentInfo"}
     ],
