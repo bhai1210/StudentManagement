@@ -17,10 +17,11 @@ export default function Sidebar({ role, isOpen, setIsOpen }) {
       { label: "Dashboard", path: "/User" },
        { label: "Manage Staff", path: "/staff" },
         { label: "Student Management", path: "/Students" },
-         { label: "Classes Making", path: "/ClassCreate" },
+         { label: "Add Products", path: "/ClassCreate" },
        
           { label: "Course Information", path: "/StudentDashboard" },
            { label: "Payement Gateway", path: "/razorpay" },
+             { label: "Purchase Items", path: "/purchase" },
     ],
     user: [
       

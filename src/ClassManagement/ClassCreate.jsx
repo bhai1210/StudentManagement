@@ -20,33 +20,33 @@ import api from "../Services/api";
 const { Title } = Typography;
 
 function ClassCreate() {
-  const [users, setUsers] = useState([]);
+  const [classes, setClasses] = useState([]);
   const [loading, setLoading] = useState(false);
   const [saving, setSaving] = useState(false);
   const [editId, setEditId] = useState(null);
   const [form] = Form.useForm();
-  const [imageUrl, setImageUrl] = useState(null); // preview + backend URL
+  const [imageUrl, setImageUrl] = useState(null);
 
   // Fetch all classes
-  const fetchUsers = async () => {
+  const fetchClasses = async () => {
     try {
       setLoading(true);
       const response = await api.get("/class");
       if (Array.isArray(response.data?.data)) {
-        setUsers(response.data.data);
+        setClasses(response.data.data);
       } else {
-        setUsers([]);
+        setClasses([]);
       }
     } catch (error) {
       message.error("Failed to fetch classes!");
-      setUsers([]);
+      setClasses([]);
     } finally {
       setLoading(false);
     }
   };
 
   useEffect(() => {
-    fetchUsers();
+    fetchClasses();
   }, []);
 
   // Submit handler (Create / Update)
@@ -54,22 +54,22 @@ function ClassCreate() {
     try {
       setSaving(true);
 
-      const payload = { ...values, students: [values.student] };
+      const payload = {
+        ...values,
+        stockcount: [values.stockcount], // backend expects array
+        image: imageUrl || null,
+      };
 
       if (editId) {
-        // Edit mode
-        payload.image = imageUrl || users.find((u) => u._id === editId)?.image || null;
         await api.put(`/class/${editId}`, payload);
         message.success("Class updated successfully!");
         setEditId(null);
       } else {
-        // Create mode
-        payload.image = imageUrl || null;
         await api.post("/class", payload);
         message.success("Class created successfully!");
       }
 
-      await fetchUsers();
+      await fetchClasses();
       form.resetFields();
       setImageUrl(null);
     } catch (err) {
@@ -81,69 +81,62 @@ function ClassCreate() {
   };
 
   // Edit handler
-  const onEdit = (user) => {
-    setEditId(user._id);
+  const onEdit = (cls) => {
+    setEditId(cls._id);
     form.setFieldsValue({
-      name: user.name || "",
-      subject: user.subject || "",
-      teacher: user.teacher || "",
-      student: user.students?.[0] || "",
+      name: cls.name || "",
+      price: cls.price || "",
+      description: cls.description || "",
+      stockcount: cls.stockcount?.[0] || "",
     });
-    setImageUrl(user.image || null); // show old image
+    setImageUrl(cls.image || null);
   };
 
   // Delete handler
-  const deleteUser = async (id) => {
+  const deleteClass = async (id) => {
     try {
       await api.delete(`/class/${id}`);
       message.success("Class deleted successfully!");
-      await fetchUsers();
+      await fetchClasses();
     } catch (err) {
       console.error(err);
       message.error("Failed to delete class!");
     }
   };
 
-const handleUpload = async ({ file, onSuccess, onError }) => {
-  try {
-    const formData = new FormData();
-    formData.append("file", file);
+  // File Upload
+  const handleUpload = async ({ file, onSuccess, onError }) => {
+    try {
+      const formData = new FormData();
+      formData.append("file", file);
 
-    const res = await api.post("/uploads", formData, {
-      headers: { "Content-Type": "multipart/form-data" },
-    });
+      const res = await api.post("/uploads", formData, {
+        headers: { "Content-Type": "multipart/form-data" },
+      });
 
-    const uploadedUrl = res?.data?.fileUrl; // ✅ backend gives this
+      const uploadedUrl = res?.data?.fileUrl;
+      if (!uploadedUrl) throw new Error("Upload response missing fileUrl");
 
-    if (!uploadedUrl) throw new Error("Upload response missing fileUrl");
-
-    setImageUrl(uploadedUrl); // ✅ show preview
-    message.success("Image uploaded successfully!");
-
-    if (onSuccess) onSuccess("ok");
-  } catch (err) {
-    console.error("Upload error:", err);
-    message.error("Image upload failed!");
-    if (onError) onError(err);
-  }
-};
-
-
-
-
-
-
+      setImageUrl(uploadedUrl);
+      message.success("Image uploaded successfully!");
+      if (onSuccess) onSuccess("ok");
+    } catch (err) {
+      console.error("Upload error:", err);
+      message.error("Image upload failed!");
+      if (onError) onError(err);
+    }
+  };
 
   // Table columns
   const columns = [
     { title: "Name", dataIndex: "name", key: "name" },
-    { title: "Subject", dataIndex: "subject", key: "subject" },
-    { title: "Teacher", dataIndex: "teacher", key: "teacher" },
+    { title: "Price", dataIndex: "price", key: "price" },
+    { title: "Description", dataIndex: "description", key: "description" },
     {
-      title: "Students",
-      dataIndex: "students",
-      key: "students",
-      render: (students) => (students || []).join(", "),
+      title: "Stock Count",
+      dataIndex: "stockcount",
+      key: "stockcount",
+      render: (stockcount) => (stockcount || []).join(", "),
     },
     {
       title: "Image",
@@ -178,7 +171,7 @@ const handleUpload = async ({ file, onSuccess, onError }) => {
           >
             Edit
           </Button>
-          <Button danger size="small" onClick={() => deleteUser(record._id)}>
+          <Button danger size="small" onClick={() => deleteClass(record._id)}>
             Delete
           </Button>
         </Space>
@@ -204,7 +197,7 @@ const handleUpload = async ({ file, onSuccess, onError }) => {
           }}
         >
           <Title level={2} style={{ textAlign: "center", color: "#0d3b66" }}>
-            {editId ? "Edit Class" : "Create Class"}
+            {editId ? "Edit Product" : "Create Product"}
           </Title>
 
           {/* Form */}
@@ -218,40 +211,40 @@ const handleUpload = async ({ file, onSuccess, onError }) => {
               <Col xs={24} sm={12}>
                 <Form.Item
                   name="name"
-                  label="Class Name"
-                  rules={[{ required: true, message: "Please enter class name" }]}
+                  label="Product Name"
+                  rules={[{ required: true, message: "Please enter product name" }]}
                 >
-                  <Input placeholder="Enter class name" />
+                  <Input placeholder="Enter product name" />
                 </Form.Item>
               </Col>
 
               <Col xs={24} sm={12}>
                 <Form.Item
-                  name="subject"
-                  label="Subject"
-                  rules={[{ required: true, message: "Please enter subject" }]}
+                  name="price"
+                  label="Product Price"
+                  rules={[{ required: true, message: "Please enter price" }]}
                 >
-                  <Input placeholder="Enter subject" />
+                  <Input placeholder="Enter price" />
                 </Form.Item>
               </Col>
 
               <Col xs={24} sm={12}>
                 <Form.Item
-                  name="teacher"
-                  label="Teacher"
-                  rules={[{ required: true, message: "Please enter teacher name" }]}
+                  name="description"
+                  label="Product Description"
+                  rules={[{ required: true, message: "Please enter description" }]}
                 >
-                  <Input placeholder="Enter teacher name" />
+                  <Input placeholder="Enter description" />
                 </Form.Item>
               </Col>
 
               <Col xs={24} sm={12}>
                 <Form.Item
-                  name="student"
-                  label="Student"
-                  rules={[{ required: true, message: "Please enter student name" }]}
+                  name="stockcount"
+                  label="Stock of Product"
+                  rules={[{ required: true, message: "Please enter stock count" }]}
                 >
-                  <Input placeholder="Enter student name" />
+                  <Input placeholder="Enter stock count" />
                 </Form.Item>
               </Col>
 
@@ -259,31 +252,29 @@ const handleUpload = async ({ file, onSuccess, onError }) => {
               <Col xs={24} sm={12}>
                 <Form.Item label="Upload Image">
                   <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
-                  <Upload
-  customRequest={handleUpload}
-  showUploadList={false}
-  accept="image/*"
->
-  <Button icon={<UploadOutlined />}>
-    {editId ? "Change Image" : "Click to Upload"}
-  </Button>
-</Upload>
+                    <Upload
+                      customRequest={handleUpload}
+                      showUploadList={false}
+                      accept="image/*"
+                    >
+                      <Button icon={<UploadOutlined />}>
+                        {editId ? "Change Image" : "Click to Upload"}
+                      </Button>
+                    </Upload>
 
-
-             {imageUrl && (
-  <img
-    src={imageUrl}
-    alt="preview"
-    style={{
-      width: 100,
-      height: 100,
-      objectFit: "cover",
-      borderRadius: 8,
-      border: "1px solid #ddd",
-    }}
-  />
-)}
-
+                    {imageUrl && (
+                      <img
+                        src={imageUrl}
+                        alt="preview"
+                        style={{
+                          width: 100,
+                          height: 100,
+                          objectFit: "cover",
+                          borderRadius: 8,
+                          border: "1px solid #ddd",
+                        }}
+                      />
+                    )}
                   </div>
                 </Form.Item>
               </Col>
@@ -299,7 +290,7 @@ const handleUpload = async ({ file, onSuccess, onError }) => {
                   htmlType="submit"
                   loading={saving}
                 >
-                  {editId ? "Update Class" : "Create Class"}
+                  {editId ? "Update Product" : "Create Product"}
                 </Button>
                 {editId && (
                   <Button
@@ -323,11 +314,11 @@ const handleUpload = async ({ file, onSuccess, onError }) => {
           ) : (
             <>
               <Title level={4} style={{ marginBottom: 16, color: "#444" }}>
-                Class List
+                Product List
               </Title>
               <div style={{ width: "100%", overflowX: "auto" }}>
                 <Table
-                  dataSource={users}
+                  dataSource={classes}
                   columns={columns}
                   rowKey="_id"
                   bordered
