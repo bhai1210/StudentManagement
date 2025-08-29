@@ -4,7 +4,7 @@ import { getToken } from "./token";
 console.log("ENV VAR:", process.env.REACT_APP_API_BASE_URL);
 
 const api = axios.create({
-  baseURL: "https://student-management-backend-node-rd8.vercel.app",
+  baseURL: "http://localhost:3000",
   withCredentials: false,
 });
 
