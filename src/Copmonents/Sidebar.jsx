@@ -52,7 +52,7 @@ export default function Sidebar({ role, isOpen, setIsOpen }) {
 
   return (
     <aside ref={sidebarRef} className={`sidebar ${isOpen ? "open" : ""}`}>
-      <h2 className="logo">Payment Gateway</h2>
+      <h2 className="logo">Payment App</h2>
 
       <ul className="menu-list">
         {items.map((item, index) => (
