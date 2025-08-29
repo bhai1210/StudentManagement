@@ -95,18 +95,7 @@ export default function EcommerceDashboard() {
     <main className="dashboard" as={motion.div} initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.8 }}>
       
       {/* Header */}
-      <header className="dashboard-header" as={motion.div} variants={fadeUp} initial="hidden" animate="show">
-        <h1>E-Commerce Dashboard</h1>
-        <div className="actions">
-          <input
-            type="text"
-            placeholder="Search orders, products, customers…"
-            value={search}
-            onChange={(e) => setSearch(e.target.value)}
-          />
-          <button className="btn-primary">Add Product</button>
-        </div>
-      </header>
+   
 
       {/* KPIs */}
       <section className="kpi-section" as={motion.div} variants={stagger} initial="hidden" animate="show">
