@@ -1,26 +1,61 @@
 import React, { useEffect, useState } from "react";
-import { Card, Button, Row, Col, Spin, message, Typography, Modal } from "antd";
+import {
+  Card,
+  Button,
+  Row,
+  Col,
+  Spin,
+  message,
+  Typography,
+  Modal,
+  Input,
+  Slider,
+} from "antd";
 import { motion } from "framer-motion";
 import api from "../Services/api";
 
 const { Title, Text } = Typography;
+const { Search } = Input;
 
 function PurchaseItem() {
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(false);
+
+  // ✅ Filters
+  const [searchQuery, setSearchQuery] = useState("");
+  const [priceRange, setPriceRange] = useState([0, 10000]);
+  const [priceLimits, setPriceLimits] = useState([0, 10000]); // min/max available
 
   // ✅ Payment states
   const [successDialog, setSuccessDialog] = useState(false);
   const [failureDialog, setFailureDialog] = useState(false);
   const [paymentDetails, setPaymentDetails] = useState(null);
 
-  // ✅ Fetch Products
+  // ✅ Fetch Products (with filters)
   const fetchProducts = async () => {
     try {
       setLoading(true);
-      const res = await api.get("/class");
+
+      const params = {};
+      if (searchQuery) params.search = searchQuery;
+      if (priceRange[0] !== priceLimits[0]) params.minPrice = priceRange[0];
+      if (priceRange[1] !== priceLimits[1]) params.maxPrice = priceRange[1];
+
+      const res = await api.get("/class", { params });
+
       if (Array.isArray(res.data?.data)) {
         setProducts(res.data.data);
+
+        // set slider min/max only once when products exist
+        if (res.data.data.length > 0) {
+          const prices = res.data.data.map((p) => p.price);
+          const min = Math.min(...prices);
+          const max = Math.max(...prices);
+          setPriceLimits([min, max]);
+          if (priceRange[0] === 0 && priceRange[1] === 10000) {
+            setPriceRange([min, max]); // initialize range on first load
+          }
+        }
       } else {
         setProducts([]);
       }
@@ -34,9 +69,10 @@ function PurchaseItem() {
 
   useEffect(() => {
     fetchProducts();
-  }, []);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [searchQuery, priceRange]);
 
-  // ✅ Payment Handler
+  // ✅ Payment Handler (same as before)
   const handlePayment = async (product) => {
     try {
       const { data } = await api.post("/payments/create-order", {
@@ -45,7 +81,7 @@ function PurchaseItem() {
       const { order } = data;
 
       const options = {
-        key: "rzp_live_R9XuwBFRtEokgL", // ⚠️ replace with test key in dev
+        key: "rzp_live_R9XuwBFRtEokgL",
         amount: order.amount,
         currency: order.currency,
         name: "Product Purchase",
@@ -74,17 +110,8 @@ function PurchaseItem() {
             setFailureDialog(true);
           }
         },
-        prefill: {
-          name: "John Doe",
-          email: "john@example.com",
-          contact: "9999999999",
-        },
         theme: { color: "#0d3b66" },
-        modal: {
-          ondismiss: () => {
-            setFailureDialog(true);
-          },
-        },
+        modal: { ondismiss: () => setFailureDialog(true) },
       };
 
       const rzp = new window.Razorpay(options);
@@ -106,7 +133,7 @@ function PurchaseItem() {
           level={2}
           style={{
             textAlign: "center",
-            marginBottom: "50px",
+            marginBottom: "30px",
             color: "#0d3b66",
             fontWeight: "bold",
           }}
@@ -115,77 +142,111 @@ function PurchaseItem() {
         </Title>
       </motion.div>
 
+      {/* ✅ Filters Section */}
+      <Row
+        gutter={[24, 24]}
+        justify="center"
+        style={{ marginBottom: "30px", textAlign: "center" }}
+      >
+        <Col xs={24} md={8}>
+          <Search
+            placeholder="Search products..."
+            allowClear
+            enterButton
+            onSearch={(val) => setSearchQuery(val)}
+            onChange={(e) => setSearchQuery(e.target.value)}
+          />
+        </Col>
+        <Col xs={24} md={8}>
+          <div style={{ padding: "0 20px" }}>
+            <Text strong>Filter by Price:</Text>
+            <Slider
+              range
+              min={priceLimits[0]}
+              max={priceLimits[1]}
+              value={priceRange}
+              onChange={(val) => setPriceRange(val)}
+              tooltip={{ formatter: (val) => `₹${val}` }}
+            />
+          </div>
+        </Col>
+      </Row>
+
       {loading ? (
         <Spin size="large" style={{ display: "block", margin: "40px auto" }} />
       ) : (
         <Row gutter={[24, 24]} justify="center">
-          {products.map((item, index) => (
-            <Col xs={24} sm={12} md={8} lg={6} key={item._id}>
-              <motion.div
-                initial={{ opacity: 0, scale: 0.9 }}
-                animate={{ opacity: 1, scale: 1 }}
-                transition={{ duration: 0.5, delay: index * 0.15 }}
-                whileHover={{ scale: 1.05 }}
-              >
-                <Card
-                  hoverable
-                  style={{
-                    borderRadius: 20,
-                    overflow: "hidden",
-                    boxShadow: "0 6px 18px rgba(0,0,0,0.12)",
-                  }}
-                  cover={
-                    <motion.img
-                      whileHover={{ scale: 1.1 }}
-                      transition={{ duration: 0.4 }}
-                      alt={item.name}
-                      src={item.image || "https://via.placeholder.com/300"}
-                      style={{
-                        height: 220,
-                        objectFit: "cover",
-                        borderBottom: "1px solid #eee",
-                      }}
-                    />
-                  }
+          {products.length > 0 ? (
+            products.map((item, index) => (
+              <Col xs={24} sm={12} md={8} lg={6} key={item._id}>
+                <motion.div
+                  initial={{ opacity: 0, scale: 0.9 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  transition={{ duration: 0.5, delay: index * 0.15 }}
+                  whileHover={{ scale: 1.05 }}
                 >
-                  <Title
-                    level={4}
+                  <Card
+                    hoverable
                     style={{
-                      marginBottom: 8,
-                      color: "#0d3b66",
-                      fontWeight: 600,
+                      borderRadius: 20,
+                      overflow: "hidden",
+                      boxShadow: "0 6px 18px rgba(0,0,0,0.12)",
                     }}
+                    cover={
+                      <motion.img
+                        whileHover={{ scale: 1.1 }}
+                        transition={{ duration: 0.4 }}
+                        alt={item.name}
+                        src={item.image || "https://via.placeholder.com/300"}
+                        style={{
+                          height: 220,
+                          objectFit: "cover",
+                          borderBottom: "1px solid #eee",
+                        }}
+                      />
+                    }
                   >
-                    {item.name}
-                  </Title>
-                  <Text strong style={{ fontSize: 18, color: "#ff5722" }}>
-                    ₹ {item.price}
-                  </Text>
-                  <p style={{ margin: "10px 0", color: "#555" }}>
-                    {item.description}
-                  </p>
-
-                  <motion.div whileHover={{ scale: 1.05 }}>
-                    <Button
-                      type="primary"
-                      block
+                    <Title
+                      level={4}
                       style={{
-                        marginTop: 12,
-                        background: "#0d3b66",
-                        border: "none",
-                        borderRadius: 10,
-                        fontWeight: "600",
-                        padding: "10px 0",
+                        marginBottom: 8,
+                        color: "#0d3b66",
+                        fontWeight: 600,
                       }}
-                      onClick={() => handlePayment(item)}
                     >
-                      🛒 Buy Now
-                    </Button>
-                  </motion.div>
-                </Card>
-              </motion.div>
-            </Col>
-          ))}
+                      {item.name}
+                    </Title>
+                    <Text strong style={{ fontSize: 18, color: "#ff5722" }}>
+                      ₹ {item.price}
+                    </Text>
+                    <p style={{ margin: "10px 0", color: "#555" }}>
+                      {item.description}
+                    </p>
+
+                    <motion.div whileHover={{ scale: 1.05 }}>
+                      <Button
+                        type="primary"
+                        block
+                        style={{
+                          marginTop: 12,
+                          background: "#0d3b66",
+                          border: "none",
+                          borderRadius: 10,
+                          fontWeight: "600",
+                          padding: "10px 0",
+                        }}
+                        onClick={() => handlePayment(item)}
+                      >
+                        🛒 Buy Now
+                      </Button>
+                    </motion.div>
+                  </Card>
+                </motion.div>
+              </Col>
+            ))
+          ) : (
+            <Text style={{ marginTop: 50 }}>No products found ❌</Text>
+          )}
         </Row>
       )}
 
@@ -194,7 +255,11 @@ function PurchaseItem() {
         open={successDialog}
         onCancel={() => setSuccessDialog(false)}
         footer={[
-          <Button key="ok" type="primary" onClick={() => setSuccessDialog(false)}>
+          <Button
+            key="ok"
+            type="primary"
+            onClick={() => setSuccessDialog(false)}
+          >
             OK
           </Button>,
         ]}
