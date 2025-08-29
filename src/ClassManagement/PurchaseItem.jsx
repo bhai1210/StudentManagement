@@ -124,23 +124,7 @@ function PurchaseItem() {
 
   return (
     <div style={{ minHeight: "100vh", background: "#f5f7fa", padding: "40px" }}>
-      <motion.div
-        initial={{ opacity: 0, y: 40 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.8, ease: "easeOut" }}
-      >
-        <Title
-          level={2}
-          style={{
-            textAlign: "center",
-            marginBottom: "30px",
-            color: "#0d3b66",
-            fontWeight: "bold",
-          }}
-        >
-          🛍️ Our Exclusive Products
-        </Title>
-      </motion.div>
+     
 
       {/* ✅ Filters Section */}
       <Row
