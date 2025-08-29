@@ -15,7 +15,7 @@ import {
 } from "antd";
 import { motion } from "framer-motion";
 import { UploadOutlined } from "@ant-design/icons";
-import api from "../Services/api";
+import api from "../../Services/api";
 
 const { Title } = Typography;
 

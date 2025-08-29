@@ -15,7 +15,7 @@ import {
   Pie,
   Cell,
 } from "recharts";
-import "./StudentDashboard.css";
+import "./AdminDashboard.css";
 
 // ---- Animations ----
 const fadeUp = {
@@ -95,7 +95,10 @@ export default function EcommerceDashboard() {
     <main className="dashboard" as={motion.div} initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.8 }}>
       
       {/* Header */}
-   
+      <header className="dashboard-header" as={motion.div} variants={fadeUp} initial="hidden" animate="show">
+        <h1>Admin Dashboard</h1>
+       
+      </header>
 
       {/* KPIs */}
       <section className="kpi-section" as={motion.div} variants={stagger} initial="hidden" animate="show">

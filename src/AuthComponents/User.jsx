@@ -156,7 +156,7 @@ export default function User() {
           color="#0d3b66"
           textAlign={isMobile ? "center" : "left"}
         >
-          User Management
+          Master Access panel
         </Typography>
 
         <Stack direction={isMobile ? "column" : "row"} spacing={2} alignItems="center">

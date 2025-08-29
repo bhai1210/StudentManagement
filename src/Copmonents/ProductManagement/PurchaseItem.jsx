@@ -12,7 +12,7 @@ import {
   Slider,
 } from "antd";
 import { motion } from "framer-motion";
-import api from "../Services/api";
+import api from "../../Services/api";
 
 const { Title, Text } = Typography;
 const { Search } = Input;

@@ -1,6 +1,7 @@
 import React, { useEffect, useRef } from "react";
-import "../Styles/SidebarLayout.css";
-import { useAuth } from "../Context/AuthContext";
+import "./SidebarLayout.css";
+
+import { useAuth } from "../../../Context/AuthContext";
 import { NavLink, useNavigate } from "react-router-dom";
 
 export default function Sidebar({ role, isOpen, setIsOpen }) {
@@ -26,7 +27,7 @@ export default function Sidebar({ role, isOpen, setIsOpen }) {
     ],
     user: [
       
-     { label: "Student Dashboard", path: "/BetaDashboard" },
+     { label: "User Dashboard", path: "/BetaDashboard" },
       //  { label: "Course Information", path: "/StudentDashboard" },
                   { label: "Purchase Items", path: "/purchase" },
      

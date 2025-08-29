@@ -3,29 +3,27 @@ import { Routes, Route, Navigate, useLocation, useNavigate } from "react-router-
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
-import Login from "./Pages/Login";
-import Register from "./Pages/Register";
-import Dashboard from "./Pages/Dashboard";
-import ForgotPassword from "./Pages/ForgotPassword";
-import ResetPassword from "./Pages/ResetPassword";
-import User from "./Pages/User";
-import StudentFormPage from "./Student/StudentFormPage";
-import StudentListPage from "./Student/StudentListPage";
-import StudentViewPage from "./Student/StudentViewPage";
-import PrivateRoute from "./Copmonents/PrivateRoute";
+import Login from "./AuthComponents/Login";
+import Register from "./AuthComponents/Register";
+import Dashboard from "./AuthComponents/Dashboard";
+import ForgotPassword from "./AuthComponents/ForgotPassword";
+import ResetPassword from "./AuthComponents/ResetPassword";
+import User from "./AuthComponents/User";
+
+
+import PrivateRoute from "./Copmonents/LayoutComponents/PrivateRoute/PrivateRoute";
 import { useAuth } from "./Context/AuthContext";
-import Sidebar from "./Copmonents/Sidebar";
-import Header from "./Copmonents/Header";
-import ClassCreate from "./ClassManagement/ClassCreate";
-import ExtraCrud from "./ExtraCrud/ExtraCrud";
-import ExtraCrudOne from "./ExtraCrud/ExtraCrudOne/ExtraCrudOne";
+import Sidebar from "./Copmonents/LayoutComponents/Sidebar/Sidebar";
+import Header from "./Copmonents/LayoutComponents/Header/Header";
+import ClassCreate from "./Copmonents/ProductManagement/CreateProduct";
+
 
 import "./App.css";
-import StudentDashboard from "./SuperComponents/StudentDashboard/StudentDashboard";
-import ClassesSuper from "./SuperComponents/ClassesSuper.jsx/classessuper";
-import BetaDashboard from "./SuperComponents/BetaDasboard/BetaDashboard";
+import StudentDashboard from "./Copmonents/AdminDashbord/AdminDashboard";
+
+import BetaDashboard from "./Copmonents/UserDashboard/userdashboard";
 import RazorpayPayment from "./Copmonents/Payment/RazorpayPayment";
-import PurchaseItem from "./ClassManagement/PurchaseItem";
+import PurchaseItem from "./Copmonents/ProductManagement/PurchaseItem";
 
 export default function App() {
   const { token, role } = useAuth();
@@ -81,14 +79,7 @@ export default function App() {
                 </PrivateRoute>
               }
             />
-              <Route
-              path="/StudentDashboard"
-              element={
-                <PrivateRoute>
-                  <ClassesSuper />
-               </PrivateRoute>
-              }
-            />
+            
                <Route
               path="/BetaDashboard"
               element={
@@ -129,22 +120,7 @@ export default function App() {
                 </PrivateRoute>
               }
             />
-            <Route
-              path="/Info"
-              element={
-                <PrivateRoute>
-                  <ExtraCrud />
-                </PrivateRoute>
-              }
-            />
-            <Route
-              path="/StudentInfo"
-              element={
-                <PrivateRoute>
-                  <ExtraCrudOne />
-                </PrivateRoute>
-              }
-            />
+         
             
             <Route
               path="/ClassCreate"
@@ -154,38 +130,8 @@ export default function App() {
                 </PrivateRoute>
               }
             />
-            <Route
-              path="/Students"
-              element={
-                <PrivateRoute>
-                  <StudentListPage />
-                </PrivateRoute>
-              }
-            />
-            <Route
-              path="/Students/add"
-              element={
-                <PrivateRoute>
-                  <StudentFormPage />
-                </PrivateRoute>
-              }
-            />
-            <Route
-              path="/Students/edit/:id"
-              element={
-                <PrivateRoute>
-                  <StudentFormPage />
-                </PrivateRoute>
-              }
-            />
-            <Route
-              path="/Students/view/:id"
-              element={
-                <PrivateRoute>
-                  <StudentViewPage />
-                </PrivateRoute>
-              }
-            />
+          
+          
             <Route path="*" element={<Navigate to="/dashboard" replace />} />
           </Routes>
         </main>
