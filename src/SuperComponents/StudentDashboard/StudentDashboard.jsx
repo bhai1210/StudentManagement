@@ -15,7 +15,7 @@ import {
   Pie,
   Cell,
 } from "recharts";
-import "./EcommerceDashboard.css";
+import "./StudentDashboard.css";
 
 // ---- Animations ----
 const fadeUp = {
