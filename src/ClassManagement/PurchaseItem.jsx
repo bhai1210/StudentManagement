@@ -141,19 +141,7 @@ function PurchaseItem() {
             onChange={(e) => setSearchQuery(e.target.value)}
           />
         </Col>
-        <Col xs={24} md={8}>
-          <div style={{ padding: "0 20px" }}>
-            <Text strong>Filter by Price:</Text>
-            <Slider
-              range
-              min={priceLimits[0]}
-              max={priceLimits[1]}
-              value={priceRange}
-              onChange={(val) => setPriceRange(val)}
-              tooltip={{ formatter: (val) => `₹${val}` }}
-            />
-          </div>
-        </Col>
+     
       </Row>
 
       {loading ? (
