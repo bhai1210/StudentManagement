@@ -198,7 +198,7 @@ function ClassCreate() {
           }}
         >
           <Title level={2} style={{ textAlign: "center", color: "#0d3b66" }}>
-            {editId ? "Edit Class" : "Create Class"}
+            {editId ? "Edit Class" : "Create product"}
           </Title>
 
           {/* ✅ Form */}
@@ -212,17 +212,17 @@ function ClassCreate() {
               <Col xs={24} sm={12}>
                 <Form.Item
                   name="name"
-                  label="Class Name"
-                  rules={[{ required: true, message: "Please enter class name" }]}
+                  label="product Name"
+                  rules={[{ required: true, message: "Please enter product name" }]}
                 >
-                  <Input placeholder="Enter class name" />
+                  <Input placeholder="Enter product name" />
                 </Form.Item>
               </Col>
 
               <Col xs={24} sm={12}>
                 <Form.Item
                   name="price"
-                  label="Class Price"
+                  label="product Price"
                   rules={[{ required: true, message: "Please enter price" }]}
                 >
                   <Input placeholder="Enter price" />
@@ -232,7 +232,7 @@ function ClassCreate() {
               <Col xs={24} sm={12}>
                 <Form.Item
                   name="description"
-                  label="Class Description"
+                  label="product Description"
                   rules={[{ required: true, message: "Please enter description" }]}
                 >
                   <Input placeholder="Enter description" />
@@ -291,7 +291,7 @@ function ClassCreate() {
                   htmlType="submit"
                   loading={saving}
                 >
-                  {editId ? "Update Class" : "Create Class"}
+                  {editId ? "Update product" : "Create product"}
                 </Button>
                 {editId && (
                   <Button
@@ -315,7 +315,7 @@ function ClassCreate() {
           ) : (
             <>
               <Title level={4} style={{ marginBottom: 16, color: "#444" }}>
-                Class List
+                product List
               </Title>
               <div style={{ width: "100%", overflowX: "auto" }}>
                 <Table
