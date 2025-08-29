@@ -12,7 +12,7 @@ import {
 } from "@mui/material";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import api from "../Services/api";
+import api from "../../Services/api";
 
 export default function ResetPassword() {
   const { token } = useParams();

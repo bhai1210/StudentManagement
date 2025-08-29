@@ -3,12 +3,12 @@ import { Routes, Route, Navigate, useLocation, useNavigate } from "react-router-
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
-import Login from "./AuthComponents/Login";
-import Register from "./AuthComponents/Register";
-import Dashboard from "./AuthComponents/Dashboard";
-import ForgotPassword from "./AuthComponents/ForgotPassword";
-import ResetPassword from "./AuthComponents/ResetPassword";
-import User from "./AuthComponents/User";
+import Login from "./Copmonents/AuthComponents/Login";
+import Register from "./Copmonents/AuthComponents/Register";
+
+import ForgotPassword from "./Copmonents/AuthComponents/ForgotPassword";
+import ResetPassword from "./Copmonents/AuthComponents/ResetPassword";
+import User from "./Copmonents/AuthComponents/User";
 
 
 import PrivateRoute from "./Copmonents/LayoutComponents/PrivateRoute/PrivateRoute";
@@ -71,14 +71,7 @@ export default function App() {
         {/* Routes */}
         <main className="content">
           <Routes>
-            <Route
-              path="/dashboard"
-              element={
-                <PrivateRoute>
-                  <Dashboard />
-                </PrivateRoute>
-              }
-            />
+          
             
                <Route
               path="/BetaDashboard"

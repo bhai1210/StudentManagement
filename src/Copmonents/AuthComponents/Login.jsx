@@ -2,9 +2,9 @@ import { useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import api from "../Services/api";
-import { useAuth } from "../Context/AuthContext";
-import "../Styles/login.css"; // CSS file
+import api from "../../Services/api";
+import { useAuth } from "../../Context/AuthContext";
+import "../../Styles/login.css"; // CSS file
 import { useEffect } from "react";
 export default function Login() {
  const [form, setForm] = useState({ email: "", password: "" });

@@ -15,73 +15,45 @@ import {
 } from "antd";
 import { motion } from "framer-motion";
 import { UploadOutlined } from "@ant-design/icons";
+import { useDispatch, useSelector } from "react-redux";
 import api from "../../Services/api";
+
+import { fetchClasses,createClass,updateClass,deleteClass } from "../../features/classSlice";
 
 const { Title } = Typography;
 
 function ClassCreate() {
-  const [classes, setClasses] = useState([]);
-  const [loading, setLoading] = useState(false);
-  const [saving, setSaving] = useState(false);
+  const dispatch = useDispatch();
+  const { data: classes, loading, saving } = useSelector((state) => state.classes);
+
   const [editId, setEditId] = useState(null);
   const [form] = Form.useForm();
   const [imageUrl, setImageUrl] = useState(null);
 
-  // ✅ Fetch all classes
-  const fetchClasses = async () => {
-    try {
-      setLoading(true);
-      const response = await api.get("/class");
-      if (Array.isArray(response.data?.data)) {
-        setClasses(response.data.data);
-      } else {
-        setClasses([]);
-      }
-    } catch (error) {
-      console.error(error);
-      message.error("Failed to fetch classes!");
-      setClasses([]);
-    } finally {
-      setLoading(false);
-    }
-  };
-
   useEffect(() => {
-    fetchClasses();
-  }, []);
+    dispatch(fetchClasses());
+  }, [dispatch]);
 
-  // ✅ Submit handler (Create / Update)
+  // ✅ Submit handler
   const handleSubmit = async (values) => {
-    try {
-      setSaving(true);
+    const payload = {
+      ...values,
+      stockcount: values.stockcount ? [values.stockcount] : [],
+      image: imageUrl || null,
+    };
 
-      const payload = {
-        ...values,
-        stockcount: values.stockcount ? [values.stockcount] : [],
-        image: imageUrl || null,
-      };
-
-      if (editId) {
-        await api.put(`/class/${editId}`, payload);
-        message.success("Class updated successfully!");
-        setEditId(null);
-      } else {
-        await api.post("/class", payload);
-        message.success("Class created successfully!");
-      }
-
-      await fetchClasses();
-      form.resetFields();
-      setImageUrl(null);
-    } catch (err) {
-      console.error(err);
-      message.error("Error saving class!");
-    } finally {
-      setSaving(false);
+    if (editId) {
+      dispatch(updateClass({ id: editId, payload }));
+      setEditId(null);
+    } else {
+      dispatch(createClass(payload));
     }
+
+    form.resetFields();
+    setImageUrl(null);
   };
 
-  // ✅ Edit handler
+  // ✅ Edit
   const onEdit = (cls) => {
     setEditId(cls._id);
     form.setFieldsValue({
@@ -93,19 +65,12 @@ function ClassCreate() {
     setImageUrl(cls.image || null);
   };
 
-  // ✅ Delete handler
-  const deleteClass = async (id) => {
-    try {
-      await api.delete(`/class/${id}`);
-      message.success("Class deleted successfully!");
-      await fetchClasses();
-    } catch (err) {
-      console.error(err);
-      message.error("Failed to delete class!");
-    }
+  // ✅ Delete
+  const onDelete = (id) => {
+    dispatch(deleteClass(id));
   };
 
-  // ✅ File Upload to backend (Vercel Blob)
+  // ✅ File Upload
   const handleUpload = async ({ file, onSuccess, onError }) => {
     try {
       const formData = new FormData();
@@ -128,7 +93,7 @@ function ClassCreate() {
     }
   };
 
-  // ✅ Table columns
+  // ✅ Columns
   const columns = [
     { title: "Name", dataIndex: "name", key: "name" },
     { title: "Price", dataIndex: "price", key: "price" },
@@ -148,12 +113,7 @@ function ClassCreate() {
           <img
             src={image}
             alt="class"
-            style={{
-              width: 60,
-              height: 60,
-              objectFit: "cover",
-              borderRadius: 8,
-            }}
+            style={{ width: 60, height: 60, objectFit: "cover", borderRadius: 8 }}
           />
         ) : (
           "No Image"
@@ -172,7 +132,7 @@ function ClassCreate() {
           >
             Edit
           </Button>
-          <Button danger size="small" onClick={() => deleteClass(record._id)}>
+          <Button danger size="small" onClick={() => onDelete(record._id)}>
             Delete
           </Button>
         </Space>
@@ -182,99 +142,48 @@ function ClassCreate() {
 
   return (
     <div style={{ minHeight: "100vh", padding: 24, background: "#f5f7fa" }}>
-      <motion.div
-        initial={{ opacity: 0, y: 40 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.6, ease: "easeOut" }}
-      >
-        <Card
-          bordered={false}
-          style={{
-            maxWidth: 1100,
-            margin: "0 auto",
-            borderRadius: 16,
-            boxShadow: "0 4px 16px rgba(0,0,0,0.1)",
-            padding: 24,
-          }}
-        >
+      <motion.div initial={{ opacity: 0, y: 40 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6, ease: "easeOut" }}>
+        <Card bordered={false} style={{ maxWidth: 1100, margin: "0 auto", borderRadius: 16, boxShadow: "0 4px 16px rgba(0,0,0,0.1)", padding: 24 }}>
           <Title level={2} style={{ textAlign: "center", color: "#0d3b66" }}>
             {editId ? "Edit Class" : "Create product"}
           </Title>
 
           {/* ✅ Form */}
-          <Form
-            form={form}
-            layout="vertical"
-            onFinish={handleSubmit}
-            style={{ marginBottom: 32 }}
-          >
+          <Form form={form} layout="vertical" onFinish={handleSubmit} style={{ marginBottom: 32 }}>
             <Row gutter={[16, 16]}>
               <Col xs={24} sm={12}>
-                <Form.Item
-                  name="name"
-                  label="product Name"
-                  rules={[{ required: true, message: "Please enter product name" }]}
-                >
+                <Form.Item name="name" label="Product Name" rules={[{ required: true, message: "Please enter product name" }]}>
                   <Input placeholder="Enter product name" />
                 </Form.Item>
               </Col>
 
               <Col xs={24} sm={12}>
-                <Form.Item
-                  name="price"
-                  label="product Price"
-                  rules={[{ required: true, message: "Please enter price" }]}
-                >
+                <Form.Item name="price" label="Product Price" rules={[{ required: true, message: "Please enter price" }]}>
                   <Input placeholder="Enter price" />
                 </Form.Item>
               </Col>
 
               <Col xs={24} sm={12}>
-                <Form.Item
-                  name="description"
-                  label="product Description"
-                  rules={[{ required: true, message: "Please enter description" }]}
-                >
+                <Form.Item name="description" label="Product Description" rules={[{ required: true, message: "Please enter description" }]}>
                   <Input placeholder="Enter description" />
                 </Form.Item>
               </Col>
 
               <Col xs={24} sm={12}>
-                <Form.Item
-                  name="stockcount"
-                  label="Stock Count"
-                  rules={[{ required: true, message: "Please enter stock count" }]}
-                >
+                <Form.Item name="stockcount" label="Stock Count" rules={[{ required: true, message: "Please enter stock count" }]}>
                   <Input placeholder="Enter stock count" />
                 </Form.Item>
               </Col>
 
-              {/* ✅ Upload + Preview */}
+              {/* ✅ Upload */}
               <Col xs={24} sm={12}>
                 <Form.Item label="Upload Image">
                   <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
-                    <Upload
-                      customRequest={handleUpload}
-                      showUploadList={false}
-                      accept="image/*"
-                    >
-                      <Button icon={<UploadOutlined />}>
-                        {editId ? "Change Image" : "Click to Upload"}
-                      </Button>
+                    <Upload customRequest={handleUpload} showUploadList={false} accept="image/*">
+                      <Button icon={<UploadOutlined />}>{editId ? "Change Image" : "Click to Upload"}</Button>
                     </Upload>
-
                     {imageUrl && (
-                      <img
-                        src={imageUrl}
-                        alt="preview"
-                        style={{
-                          width: 100,
-                          height: 100,
-                          objectFit: "cover",
-                          borderRadius: 8,
-                          border: "1px solid #ddd",
-                        }}
-                      />
+                      <img src={imageUrl} alt="preview" style={{ width: 100, height: 100, objectFit: "cover", borderRadius: 8, border: "1px solid #ddd" }} />
                     )}
                   </div>
                 </Form.Item>
@@ -283,25 +192,11 @@ function ClassCreate() {
 
             <Form.Item>
               <Space>
-                <Button
-                  style={{
-                    background: "#0d3b66",
-                    color: "white",
-                  }}
-                  htmlType="submit"
-                  loading={saving}
-                >
+                <Button style={{ background: "#0d3b66", color: "white" }} htmlType="submit" loading={saving}>
                   {editId ? "Update product" : "Create product"}
                 </Button>
                 {editId && (
-                  <Button
-                    onClick={() => {
-                      setEditId(null);
-                      form.resetFields();
-                      setImageUrl(null);
-                    }}
-                    disabled={saving}
-                  >
+                  <Button onClick={() => { setEditId(null); form.resetFields(); setImageUrl(null); }} disabled={saving}>
                     Cancel
                   </Button>
                 )}
@@ -315,37 +210,9 @@ function ClassCreate() {
           ) : (
             <>
               <Title level={4} style={{ marginBottom: 16, color: "#444" }}>
-                product List
+                Product List
               </Title>
-              <div style={{ width: "100%", overflowX: "auto" }}>
-                <Table
-                  dataSource={classes}
-                  columns={columns}
-                  rowKey="_id"
-                  bordered
-                  pagination={{ pageSize: 5, responsive: true }}
-                  scroll={{ x: "max-content" }}
-                  style={{
-                    borderRadius: 12,
-                    overflow: "hidden",
-                  }}
-                  components={{
-                    header: {
-                      cell: (props) => (
-                        <th
-                          {...props}
-                          style={{
-                            background: "#0d3b66",
-                            color: "white",
-                            textAlign: "center",
-                            fontWeight: "600",
-                          }}
-                        />
-                      ),
-                    },
-                  }}
-                />
-              </div>
+              <Table dataSource={classes} columns={columns} rowKey="_id" bordered pagination={{ pageSize: 5, responsive: true }} scroll={{ x: "max-content" }} />
             </>
           )}
         </Card>

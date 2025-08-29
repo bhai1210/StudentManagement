@@ -7,76 +7,88 @@ import {
   Spin,
   message,
   Typography,
-  Modal,
   Input,
-  Slider,
+  Badge,
+  Drawer,
+  List,
+  Radio,
 } from "antd";
 import { motion } from "framer-motion";
+import { ShoppingCartOutlined, DeleteOutlined } from "@ant-design/icons";
+import { useDispatch, useSelector } from "react-redux";
+
+import { setAddress, setShippingMethod, clearCheckout } from "../../features/checkoutSlice";
+
+import { fetchProducts } from "../../features/productSlice";
+import { addToCart,removeFromCart,clearCart } from "../../features/cartSlice";
 import api from "../../Services/api";
 
 const { Title, Text } = Typography;
 const { Search } = Input;
 
 function PurchaseItem() {
-  const [products, setProducts] = useState([]);
-  const [loading, setLoading] = useState(false);
+  const dispatch = useDispatch();
+  const { items: cart } = useSelector((state) => state.cart);
+  const { items: products, loading } = useSelector((state) => state.products);
+  const checkout = useSelector((state) => state.checkout);
 
-  // ✅ Filters
   const [searchQuery, setSearchQuery] = useState("");
-  const [priceRange, setPriceRange] = useState([0, 10000]);
-  const [priceLimits, setPriceLimits] = useState([0, 10000]); // min/max available
+  const [cartOpen, setCartOpen] = useState(false);
+  const [step, setStep] = useState(1); // 1: Cart, 2: Address, 3: Shipping
 
-  // ✅ Payment states
-  const [successDialog, setSuccessDialog] = useState(false);
-  const [failureDialog, setFailureDialog] = useState(false);
-  const [paymentDetails, setPaymentDetails] = useState(null);
+  const cartTotal = cart.reduce((sum, item) => sum + item.price * item.qty, 0);
 
-  // ✅ Fetch Products (with filters)
-  const fetchProducts = async () => {
-    try {
-      setLoading(true);
+  // Add this below your cartTotal
+const shippingCharge = checkout.shippingMethod === "express" ? 50 : 0;
+const finalTotal = cartTotal + shippingCharge;
 
-      const params = {};
-      if (searchQuery) params.search = searchQuery;
-      if (priceRange[0] !== priceLimits[0]) params.minPrice = priceRange[0];
-      if (priceRange[1] !== priceLimits[1]) params.maxPrice = priceRange[1];
-
-      const res = await api.get("/class", { params });
-
-      if (Array.isArray(res.data?.data)) {
-        setProducts(res.data.data);
-
-        // set slider min/max only once when products exist
-        if (res.data.data.length > 0) {
-          const prices = res.data.data.map((p) => p.price);
-          const min = Math.min(...prices);
-          const max = Math.max(...prices);
-          setPriceLimits([min, max]);
-          if (priceRange[0] === 0 && priceRange[1] === 10000) {
-            setPriceRange([min, max]); // initialize range on first load
-          }
-        }
-      } else {
-        setProducts([]);
-      }
-    } catch (err) {
-      console.error(err);
-      message.error("Failed to fetch products!");
-    } finally {
-      setLoading(false);
-    }
-  };
 
   useEffect(() => {
-    fetchProducts();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [searchQuery, priceRange]);
+    dispatch(fetchProducts(searchQuery));
+  }, [searchQuery, dispatch]);
 
-  // ✅ Payment Handler (same as before)
-  const handlePayment = async (product) => {
+  const handleAddToCart = (product) => {
+    dispatch(addToCart(product));
+    message.success(`${product.name} added to cart`);
+  };
+
+  const handleRemoveFromCart = (productId) => {
+    dispatch(removeFromCart(productId));
+    message.warning("Item removed from cart");
+  };
+
+  const handleProceedToCheckout = () => {
+    if (cart.length === 0) {
+      message.warning("Cart is empty!");
+      return;
+    }
+    setStep(2); // Go to address form
+  };
+
+  const handleAddressSubmit = (e) => {
+    e.preventDefault();
+    const form = e.target;
+    dispatch(
+      setAddress({
+        address: form.address.value,
+        city: form.city.value,
+        state: form.state.value,
+        zip: form.zip.value,
+        country: form.country.value,
+      })
+    );
+    setStep(3); // Go to shipping
+  };
+
+  const handlePayment = async () => {
+    if (!checkout.address) {
+      message.warning("Please enter shipping address first!");
+      return;
+    }
+
     try {
       const { data } = await api.post("/payments/create-order", {
-        amount: product.price,
+        amount: finalTotal,
       });
       const { order } = data;
 
@@ -85,7 +97,7 @@ function PurchaseItem() {
         amount: order.amount,
         currency: order.currency,
         name: "Product Purchase",
-        description: `Payment for ${product.name}`,
+        description: "Checkout Payment",
         order_id: order.id,
         handler: async (response) => {
           try {
@@ -96,54 +108,60 @@ function PurchaseItem() {
             });
 
             if (verifyRes.data.success) {
-              setPaymentDetails({
-                orderId: response.razorpay_order_id,
-                paymentId: response.razorpay_payment_id,
-                amount: product.price,
-              });
-              setSuccessDialog(true);
+              message.success("🎉 Payment Successful!");
+              dispatch(clearCart());
+              dispatch(clearCheckout());
+              setCartOpen(false);
+              setStep(1);
             } else {
-              setFailureDialog(true);
+              message.error("❌ Payment verification failed");
             }
-          } catch (error) {
-            console.error(error);
-            setFailureDialog(true);
+          } catch (err) {
+            console.error(err);
+            message.error("❌ Payment verification error");
           }
         },
         theme: { color: "#0d3b66" },
-        modal: { ondismiss: () => setFailureDialog(true) },
       };
 
       const rzp = new window.Razorpay(options);
       rzp.open();
     } catch (err) {
       console.error(err);
-      setFailureDialog(true);
+      message.error("❌ Payment failed to start");
     }
   };
 
   return (
-    <div style={{ minHeight: "100vh", background: "#f5f7fa", padding: "40px" }}>
-     
-
-      {/* ✅ Filters Section */}
-      <Row
-        gutter={[24, 24]}
-        justify="center"
-        style={{ marginBottom: "30px", textAlign: "center" }}
-      >
-        <Col xs={24} md={8}>
+    <div style={{ minHeight: "100vh", background: "#f5f7fa", padding: "20px" }}>
+      {/* Top Bar */}
+      <Row justify="space-between" align="middle" style={{ marginBottom: 30 }}>
+        <Col xs={24} md={12}>
           <Search
-            placeholder="Search products..."
+            placeholder="Search for products..."
             allowClear
-            enterButton
+            enterButton="Search"
+            size="large"
             onSearch={(val) => setSearchQuery(val)}
             onChange={(e) => setSearchQuery(e.target.value)}
           />
         </Col>
-     
+        <Col>
+          <Badge count={cart.length} offset={[10, 0]}>
+            <Button
+              type="primary"
+              size="large"
+              icon={<ShoppingCartOutlined />}
+              onClick={() => setCartOpen(true)}
+              style={{ background: "#0d3b66" }}
+            >
+              Cart
+            </Button>
+          </Badge>
+        </Col>
       </Row>
 
+      {/* Products */}
       {loading ? (
         <Spin size="large" style={{ display: "block", margin: "40px auto" }} />
       ) : (
@@ -195,23 +213,21 @@ function PurchaseItem() {
                       {item.description}
                     </p>
 
-                    <motion.div whileHover={{ scale: 1.05 }}>
-                      <Button
-                        type="primary"
-                        block
-                        style={{
-                          marginTop: 12,
-                          background: "#0d3b66",
-                          border: "none",
-                          borderRadius: 10,
-                          fontWeight: "600",
-                          padding: "10px 0",
-                        }}
-                        onClick={() => handlePayment(item)}
-                      >
-                        🛒 Buy Now
-                      </Button>
-                    </motion.div>
+                    <Button
+                      type="primary"
+                      block
+                      style={{
+                        marginTop: 12,
+                        background: "#0d3b66",
+                        border: "none",
+                        borderRadius: 10,
+                        fontWeight: "600",
+                        padding: "10px 0",
+                      }}
+                      onClick={() => handleAddToCart(item)}
+                    >
+                      🛒 Add to Cart
+                    </Button>
                   </Card>
                 </motion.div>
               </Col>
@@ -222,49 +238,107 @@ function PurchaseItem() {
         </Row>
       )}
 
-      {/* ✅ Success Modal */}
-      <Modal
-        open={successDialog}
-        onCancel={() => setSuccessDialog(false)}
-        footer={[
-          <Button
-            key="ok"
-            type="primary"
-            onClick={() => setSuccessDialog(false)}
-          >
-            OK
-          </Button>,
-        ]}
+      {/* Cart Drawer */}
+      <Drawer
+        title={
+          step === 1
+            ? "🛍️ Your Cart"
+            : step === 2
+            ? "🏠 Shipping Address"
+            : "🚚 Shipping & Payment"
+        }
+        placement="right"
+        width={400}
+        onClose={() => {
+          setCartOpen(false);
+          setStep(1);
+        }}
+        open={cartOpen}
       >
-        <Title level={4} style={{ color: "green" }}>
-          Payment Successful 🎉
-        </Title>
-        <p>
-          <b>Order ID:</b> {paymentDetails?.orderId}
-        </p>
-        <p>
-          <b>Payment ID:</b> {paymentDetails?.paymentId}
-        </p>
-        <p>
-          <b>Amount:</b> ₹{paymentDetails?.amount}
-        </p>
-      </Modal>
+        {step === 1 && (
+          <>
+            {cart.length > 0 ? (
+              <>
+                <List
+                  itemLayout="horizontal"
+                  dataSource={cart}
+                  renderItem={(item) => (
+                    <List.Item
+                      actions={[
+                        <Button
+                          danger
+                          size="small"
+                          icon={<DeleteOutlined />}
+                          onClick={() => handleRemoveFromCart(item._id)}
+                        >
+                          Remove
+                        </Button>,
+                      ]}
+                    >
+                      <List.Item.Meta
+                        avatar={
+                          <img
+                            src={item.image || "https://via.placeholder.com/60"}
+                            alt={item.name}
+                            style={{ width: 60, height: 60, objectFit: "cover" }}
+                          />
+                        }
+                        title={`${item.name} (x${item.qty})`}
+                        description={`₹ ${item.price} each`}
+                      />
+                    </List.Item>
+                  )}
+                />
+                <div style={{ marginTop: 20, textAlign: "right" }}>
+                  <Title level={4}>Total: ₹ {cartTotal}</Title>
+                  <Button
+                    type="primary"
+                    size="large"
+                    block
+                    style={{ background: "#ff5722" }}
+                    onClick={handleProceedToCheckout}
+                  >
+                    Proceed to Checkout
+                  </Button>
+                </div>
+              </>
+            ) : (
+              <Text>Your cart is empty 🛒</Text>
+            )}
+          </>
+        )}
 
-      {/* ❌ Failure Modal */}
-      <Modal
-        open={failureDialog}
-        onCancel={() => setFailureDialog(false)}
-        footer={[
-          <Button key="close" danger onClick={() => setFailureDialog(false)}>
-            Close
-          </Button>,
-        ]}
-      >
-        <Title level={4} style={{ color: "red" }}>
-          Payment Failed ❌
-        </Title>
-        <p>Something went wrong or you cancelled the payment.</p>
-      </Modal>
+        {step === 2 && (
+          <form onSubmit={handleAddressSubmit}>
+            <Input name="address" placeholder="Address" required style={{ marginBottom: 10 }} />
+            <Input name="city" placeholder="City" required style={{ marginBottom: 10 }} />
+            <Input name="state" placeholder="State" required style={{ marginBottom: 10 }} />
+            <Input name="zip" placeholder="ZIP Code" required style={{ marginBottom: 10 }} />
+            <Input name="country" placeholder="Country" required style={{ marginBottom: 10 }} />
+            <Button type="primary" htmlType="submit" block>
+              Next: Shipping
+            </Button>
+          </form>
+        )}
+
+        {step === 3 && (
+          <>
+            <Title level={5}>Select Shipping Method</Title>
+            <Radio.Group
+              onChange={(e) => dispatch(setShippingMethod(e.target.value))}
+              value={checkout.shippingMethod}
+              style={{ marginBottom: 20 }}
+            >
+              <Radio value="standard">Standard Shipping (Free)</Radio>
+              <Radio value="express">Express Shipping (+₹50)</Radio>
+            </Radio.Group>
+           <Button type="primary" block onClick={handlePayment}>
+  Pay ₹ {finalTotal}
+</Button>
+
+          </>
+        )}
+      </Drawer>
     </div>
   );
 }

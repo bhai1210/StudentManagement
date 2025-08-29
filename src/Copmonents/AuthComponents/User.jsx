@@ -9,7 +9,7 @@ import { Delete, Add, Edit, Visibility, Search } from "@mui/icons-material";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { motion, AnimatePresence } from "framer-motion";
-import api from "../Services/api";
+import api from "../../Services/api";
 import { useTheme } from "@mui/material/styles";
 
 export default function User() {
