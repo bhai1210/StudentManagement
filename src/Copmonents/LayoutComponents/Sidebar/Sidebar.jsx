@@ -19,6 +19,7 @@ export default function Sidebar({ role, isOpen, setIsOpen }) {
        { label: "Admin Panel ", path: "/staff" },
         // { label: "Student Management", path: "/Students" },
          { label: "Add Products", path: "/ClassCreate" },
+           { label: "Add Category", path: "/category" },
        
           // { label: "Course Information", path: "/StudentDashboard" },
           

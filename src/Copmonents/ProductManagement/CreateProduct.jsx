@@ -12,27 +12,48 @@ import {
   Row,
   Col,
   Upload,
+  Select,
 } from "antd";
 import { motion } from "framer-motion";
 import { UploadOutlined } from "@ant-design/icons";
 import { useDispatch, useSelector } from "react-redux";
 import api from "../../Services/api";
-
-import { fetchClasses,createClass,updateClass,deleteClass } from "../../features/classSlice";
+import {
+  fetchClasses,
+  createClass,
+  updateClass,
+  deleteClass,
+} from "../../features/classSlice";
 
 const { Title } = Typography;
+const { Option } = Select;
 
 function ClassCreate() {
   const dispatch = useDispatch();
-  const { data: classes, loading, saving } = useSelector((state) => state.classes);
+  const { data: classes, loading, saving } = useSelector(
+    (state) => state.classes
+  );
 
   const [editId, setEditId] = useState(null);
   const [form] = Form.useForm();
   const [imageUrl, setImageUrl] = useState(null);
 
+  // ✅ Category state
+  const [categories, setCategories] = useState([]);
+
   useEffect(() => {
     dispatch(fetchClasses());
+    fetchCategories();
   }, [dispatch]);
+
+  const fetchCategories = async () => {
+    try {
+      const res = await api.get("/categories");
+      setCategories(res.data);
+    } catch (err) {
+      console.error("Error fetching categories", err);
+    }
+  };
 
   // ✅ Submit handler
   const handleSubmit = async (values) => {
@@ -61,6 +82,7 @@ function ClassCreate() {
       price: cls.price || "",
       description: cls.description || "",
       stockcount: cls.stockcount?.[0] || "",
+      category: cls.category || null,
     });
     setImageUrl(cls.image || null);
   };
@@ -105,6 +127,12 @@ function ClassCreate() {
       render: (stockcount) => (stockcount || []).join(", "),
     },
     {
+      title: "Category",
+      dataIndex: "category",
+      key: "category",
+      render: (cat) => cat || "N/A",
+    },
+    {
       title: "Image",
       dataIndex: "image",
       key: "image",
@@ -113,7 +141,12 @@ function ClassCreate() {
           <img
             src={image}
             alt="class"
-            style={{ width: 60, height: 60, objectFit: "cover", borderRadius: 8 }}
+            style={{
+              width: 60,
+              height: 60,
+              objectFit: "cover",
+              borderRadius: 8,
+            }}
           />
         ) : (
           "No Image"
@@ -142,36 +175,87 @@ function ClassCreate() {
 
   return (
     <div style={{ minHeight: "100vh", padding: 24, background: "#f5f7fa" }}>
-      <motion.div initial={{ opacity: 0, y: 40 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6, ease: "easeOut" }}>
-        <Card bordered={false} style={{ maxWidth: 1100, margin: "0 auto", borderRadius: 16, boxShadow: "0 4px 16px rgba(0,0,0,0.1)", padding: 24 }}>
+      <motion.div
+        initial={{ opacity: 0, y: 40 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.6, ease: "easeOut" }}
+      >
+        <Card
+          bordered={false}
+          style={{
+            maxWidth: 1100,
+            margin: "0 auto",
+            borderRadius: 16,
+            boxShadow: "0 4px 16px rgba(0,0,0,0.1)",
+            padding: 24,
+          }}
+        >
           <Title level={2} style={{ textAlign: "center", color: "#0d3b66" }}>
-            {editId ? "Edit Class" : "Create product"}
+            {editId ? "Edit Product" : "Create Product"}
           </Title>
 
           {/* ✅ Form */}
-          <Form form={form} layout="vertical" onFinish={handleSubmit} style={{ marginBottom: 32 }}>
+          <Form
+            form={form}
+            layout="vertical"
+            onFinish={handleSubmit}
+            style={{ marginBottom: 32 }}
+          >
             <Row gutter={[16, 16]}>
               <Col xs={24} sm={12}>
-                <Form.Item name="name" label="Product Name" rules={[{ required: true, message: "Please enter product name" }]}>
+                <Form.Item
+                  name="name"
+                  label="Product Name"
+                  rules={[{ required: true, message: "Please enter product name" }]}
+                >
                   <Input placeholder="Enter product name" />
                 </Form.Item>
               </Col>
 
               <Col xs={24} sm={12}>
-                <Form.Item name="price" label="Product Price" rules={[{ required: true, message: "Please enter price" }]}>
+                <Form.Item
+                  name="price"
+                  label="Product Price"
+                  rules={[{ required: true, message: "Please enter price" }]}
+                >
                   <Input placeholder="Enter price" />
                 </Form.Item>
               </Col>
 
               <Col xs={24} sm={12}>
-                <Form.Item name="description" label="Product Description" rules={[{ required: true, message: "Please enter description" }]}>
+                <Form.Item
+                  name="description"
+                  label="Product Description"
+                  rules={[{ required: true, message: "Please enter description" }]}
+                >
                   <Input placeholder="Enter description" />
                 </Form.Item>
               </Col>
 
               <Col xs={24} sm={12}>
-                <Form.Item name="stockcount" label="Stock Count" rules={[{ required: true, message: "Please enter stock count" }]}>
+                <Form.Item
+                  name="stockcount"
+                  label="Stock Count"
+                  rules={[{ required: true, message: "Please enter stock count" }]}
+                >
                   <Input placeholder="Enter stock count" />
+                </Form.Item>
+              </Col>
+
+              {/* ✅ Category Select */}
+              <Col xs={24} sm={12}>
+                <Form.Item
+                  name="category"
+                  label="Category"
+                  rules={[{ required: true, message: "Please select category" }]}
+                >
+                  <Select placeholder="Select category">
+                    {categories.map((cat) => (
+                      <Option key={cat.id || cat._id} value={cat.name}>
+                        {cat.name}
+                      </Option>
+                    ))}
+                  </Select>
                 </Form.Item>
               </Col>
 
@@ -179,11 +263,27 @@ function ClassCreate() {
               <Col xs={24} sm={12}>
                 <Form.Item label="Upload Image">
                   <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
-                    <Upload customRequest={handleUpload} showUploadList={false} accept="image/*">
-                      <Button icon={<UploadOutlined />}>{editId ? "Change Image" : "Click to Upload"}</Button>
+                    <Upload
+                      customRequest={handleUpload}
+                      showUploadList={false}
+                      accept="image/*"
+                    >
+                      <Button icon={<UploadOutlined />}>
+                        {editId ? "Change Image" : "Click to Upload"}
+                      </Button>
                     </Upload>
                     {imageUrl && (
-                      <img src={imageUrl} alt="preview" style={{ width: 100, height: 100, objectFit: "cover", borderRadius: 8, border: "1px solid #ddd" }} />
+                      <img
+                        src={imageUrl}
+                        alt="preview"
+                        style={{
+                          width: 100,
+                          height: 100,
+                          objectFit: "cover",
+                          borderRadius: 8,
+                          border: "1px solid #ddd",
+                        }}
+                      />
                     )}
                   </div>
                 </Form.Item>
@@ -192,11 +292,22 @@ function ClassCreate() {
 
             <Form.Item>
               <Space>
-                <Button style={{ background: "#0d3b66", color: "white" }} htmlType="submit" loading={saving}>
-                  {editId ? "Update product" : "Create product"}
+                <Button
+                  style={{ background: "#0d3b66", color: "white" }}
+                  htmlType="submit"
+                  loading={saving}
+                >
+                  {editId ? "Update Product" : "Create Product"}
                 </Button>
                 {editId && (
-                  <Button onClick={() => { setEditId(null); form.resetFields(); setImageUrl(null); }} disabled={saving}>
+                  <Button
+                    onClick={() => {
+                      setEditId(null);
+                      form.resetFields();
+                      setImageUrl(null);
+                    }}
+                    disabled={saving}
+                  >
                     Cancel
                   </Button>
                 )}
@@ -212,7 +323,14 @@ function ClassCreate() {
               <Title level={4} style={{ marginBottom: 16, color: "#444" }}>
                 Product List
               </Title>
-              <Table dataSource={classes} columns={columns} rowKey="_id" bordered pagination={{ pageSize: 5, responsive: true }} scroll={{ x: "max-content" }} />
+              <Table
+                dataSource={classes}
+                columns={columns}
+                rowKey="_id"
+                bordered
+                pagination={{ pageSize: 5, responsive: true }}
+                scroll={{ x: "max-content" }}
+              />
             </>
           )}
         </Card>

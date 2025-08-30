@@ -24,6 +24,7 @@ import StudentDashboard from "./Copmonents/AdminDashbord/AdminDashboard";
 import BetaDashboard from "./Copmonents/UserDashboard/userdashboard";
 import RazorpayPayment from "./Copmonents/Payment/RazorpayPayment";
 import PurchaseItem from "./Copmonents/ProductManagement/PurchaseItem";
+import CategoryManager from "./Copmonents/CategoryComponent/CategoryManager";
 
 export default function App() {
   const { token, role } = useAuth();
@@ -89,6 +90,15 @@ export default function App() {
                </PrivateRoute>
               }
             />
+                         <Route
+              path="/category"
+              element={
+                <PrivateRoute>
+                <CategoryManager />
+               </PrivateRoute>
+              }
+            />
+
             <Route
               path="/User"
               element={

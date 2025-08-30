@@ -16,6 +16,8 @@ import {
   Cell,
 } from "recharts";
 import "./AdminDashboard.css";
+import TopItemsChart from "./myitemchart";
+import HeatmapChart from "./HeatmapChart";
 
 // ---- Animations ----
 const fadeUp = {
@@ -116,6 +118,7 @@ export default function EcommerceDashboard() {
         ))}
       </section>
 
+<TopItemsChart />
       {/* Charts */}
       <section className="charts-grid">
         <article className="chart-card" as={motion.div} variants={fadeUp} initial="hidden" animate="show">
@@ -156,6 +159,7 @@ export default function EcommerceDashboard() {
           </div>
         </article>
       </section>
+      <HeatmapChart />
 
       {/* Revenue vs Target + Orders */}
       <section className="charts-grid">
