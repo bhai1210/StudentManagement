@@ -251,7 +251,7 @@ function ClassCreate() {
                 >
                   <Select placeholder="Select category">
                     {categories.map((cat) => (
-                      <Option key={cat.id || cat._id} value={cat.name}>
+                      <Option key={cat.id || cat._id} value={cat.id}>
                         {cat.name}
                       </Option>
                     ))}
